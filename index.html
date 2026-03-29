@@ -24,15 +24,163 @@
     <button class="navl" id="nl-gate" onclick="goto('gate')">📐 GATE</button>
     <button class="navl" id="nl-psu"  onclick="goto('psu')">🏛️ PSU</button>
     <button class="navl" id="nl-dsa"  onclick="goto('dsa')">💻 DSA</button>
-    <button class="navl" id="nl-jobs" onclick="goto('jobs')">🚀 Opportunities</button>
+    <button class="navl" id="nl-jobs" onclick="requireLogin(()=>goto('jobs'),'Browse &amp; apply for opportunities')">🚀 Opportunities</button>
   </div>
   <div class="nav-r">
-    <button class="btn-cta" onclick="goto('gate')">Start Preparing →</button>
+    <!-- Auth button — shows Login or user avatar -->
+    <button id="auth-nav-btn" onclick="openAuthModal()"
+      style="display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);
+        color:var(--text2);padding:6px 14px;border-radius:9px;cursor:pointer;font-size:0.85rem;
+        font-weight:600;font-family:'Inter',sans-serif;transition:all 0.15s;"
+      onmouseover="this.style.borderColor='var(--indigo)';this.style.color='var(--indigo)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <span id="auth-nav-icon">👤</span>
+      <span id="auth-nav-label">Login</span>
+    </button>
     <div class="ham" id="ham" onclick="toggleMob()">
       <span></span><span></span><span></span>
     </div>
   </div>
 </nav>
+
+<!-- ════ AUTH MODAL ════ -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,7,14,0.92);
+  backdrop-filter:blur(16px);align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:var(--card);border:1.5px solid var(--border2);border-radius:22px;
+    padding:0;max-width:420px;width:100%;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.5);">
+
+    <!-- Top gradient bar -->
+    <div style="height:4px;background:linear-gradient(90deg,var(--indigo),var(--purple),var(--cyan));"></div>
+
+    <div style="padding:2rem;">
+      <!-- Tabs -->
+      <div style="display:flex;gap:0;background:var(--bg2);border-radius:10px;padding:3px;margin-bottom:1.75rem;">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')"
+          style="flex:1;padding:8px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;
+            font-weight:700;font-size:0.88rem;background:var(--indigo);color:#fff;transition:all 0.15s;">
+          Sign In
+        </button>
+        <button id="auth-tab-register" onclick="switchAuthTab('register')"
+          style="flex:1;padding:8px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;
+            font-weight:600;font-size:0.88rem;background:transparent;color:var(--text2);transition:all 0.15s;">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Login form -->
+      <div id="auth-form-login">
+        <div style="margin-bottom:2rem;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">👋</div>
+          <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-0.3px;margin-bottom:0.3rem;">Welcome back</div>
+          <div style="font-size:0.84rem;color:var(--text3);">Sign in to track your progress</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+          <div>
+            <label style="font-size:0.82rem;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;display:block;margin-bottom:5px;">Email</label>
+            <input id="login-email" type="email" placeholder="you@example.com"
+              style="width:100%;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);
+                padding:10px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.92rem;outline:none;box-sizing:border-box;"
+              onfocus="this.style.borderColor='var(--indigo)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;display:block;margin-bottom:5px;">Password</label>
+            <input id="login-password" type="password" placeholder="••••••••"
+              style="width:100%;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);
+                padding:10px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.92rem;outline:none;box-sizing:border-box;"
+              onfocus="this.style.borderColor='var(--indigo)'" onblur="this.style.borderColor='var(--border)'"
+              onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+          <div id="login-error" style="font-size:0.82rem;color:var(--red);display:none;padding:6px 10px;background:rgba(239,68,68,0.08);border-radius:7px;"></div>
+          <button onclick="doLogin()"
+            style="background:linear-gradient(135deg,var(--indigo),var(--purple));color:#fff;border:none;
+              cursor:pointer;padding:12px;border-radius:11px;font-family:'Inter',sans-serif;font-weight:700;
+              font-size:0.95rem;margin-top:0.25rem;transition:all 0.2s;"
+            onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+            Sign In →
+          </button>
+        </div>
+      </div>
+
+      <!-- Register form -->
+      <div id="auth-form-register" style="display:none;">
+        <div style="margin-bottom:2rem;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🚀</div>
+          <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-0.3px;margin-bottom:0.3rem;">Create your account</div>
+          <div style="font-size:0.84rem;color:var(--text3);">Free forever — track progress, bookmarks &amp; scores</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+          <div>
+            <label style="font-size:0.82rem;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;display:block;margin-bottom:5px;">Full Name</label>
+            <input id="reg-name" type="text" placeholder="Shaurya Pratap Singh"
+              style="width:100%;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);
+                padding:10px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.92rem;outline:none;box-sizing:border-box;"
+              onfocus="this.style.borderColor='var(--indigo)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;display:block;margin-bottom:5px;">Email</label>
+            <input id="reg-email" type="email" placeholder="you@example.com"
+              style="width:100%;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);
+                padding:10px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.92rem;outline:none;box-sizing:border-box;"
+              onfocus="this.style.borderColor='var(--indigo)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;display:block;margin-bottom:5px;">Password</label>
+            <input id="reg-password" type="password" placeholder="At least 6 characters"
+              style="width:100%;background:var(--bg2);border:1.5px solid var(--border);color:var(--text);
+                padding:10px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.92rem;outline:none;box-sizing:border-box;"
+              onfocus="this.style.borderColor='var(--indigo)'" onblur="this.style.borderColor='var(--border)'"
+              onkeydown="if(event.key==='Enter')doRegister()">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;display:block;margin-bottom:5px;">Preparing for</label>
+            <select id="reg-stream" style="width:100%;background:var(--bg2);border:1.5px solid var(--border);
+              color:var(--text);padding:10px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;">
+              <option value="cs">GATE CS/IT</option>
+              <option value="ece">GATE ECE</option>
+              <option value="me">GATE ME</option>
+              <option value="ce">GATE CE</option>
+              <option value="ga">General Aptitude</option>
+            </select>
+          </div>
+          <div id="reg-error" style="font-size:0.82rem;color:var(--red);display:none;padding:6px 10px;background:rgba(239,68,68,0.08);border-radius:7px;"></div>
+          <button onclick="doRegister()"
+            style="background:linear-gradient(135deg,var(--indigo),var(--purple));color:#fff;border:none;
+              cursor:pointer;padding:12px;border-radius:11px;font-family:'Inter',sans-serif;font-weight:700;
+              font-size:0.95rem;margin-top:0.25rem;transition:all 0.2s;"
+            onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+            Create Account 🚀
+          </button>
+        </div>
+      </div>
+
+      <!-- Close button -->
+      <button onclick="closeAuthModal()"
+        style="position:absolute;top:1rem;right:1rem;background:var(--bg3);border:1px solid var(--border);
+          color:var(--text2);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:1rem;">✕</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- User profile dropdown -->
+<div id="user-dropdown" style="display:none;position:fixed;top:62px;right:1rem;z-index:999;
+  background:var(--card);border:1.5px solid var(--border2);border-radius:14px;
+  padding:1rem;min-width:220px;box-shadow:0 12px 40px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;padding-bottom:0.85rem;border-bottom:1px solid var(--border);">
+    <div id="ud-avatar" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-weight:800;color:#fff;font-size:1rem;"></div>
+    <div>
+      <div id="ud-name" style="font-family:'Inter',sans-serif;font-weight:700;font-size:0.92rem;"></div>
+      <div id="ud-email" style="font-size:0.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:0.3rem;">
+    <div id="ud-stats" style="font-size:0.82rem;color:var(--text2);padding:6px 8px;background:var(--bg2);border-radius:8px;font-family:'Inter',sans-serif;margin-bottom:0.25rem;"></div>
+    <button onclick="goto('gate');closeUserDropdown()" style="display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;border:none;background:none;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">📐 GATE Practice</button>
+    <button onclick="goto('dsa');closeUserDropdown()" style="display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;border:none;background:none;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">💻 DSA Problems</button>
+    <div style="border-top:1px solid var(--border);margin:0.25rem 0;"></div>
+    <button onclick="doLogout()" style="display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;border:none;background:none;color:var(--red);cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.06)'" onmouseout="this.style.background='none'">🚪 Sign Out</button>
+  </div>
+</div>
 
 <!-- Mobile nav -->
 <div class="mobnav" id="mobnav">
@@ -40,7 +188,7 @@
   <button class="mnl" onclick="goto('gate');toggleMob()">📐 GATE Preparation</button>
   <button class="mnl" onclick="goto('psu');toggleMob()">🏛️ PSU — ISRO · BARC · DRDO</button>
   <button class="mnl" onclick="goto('dsa');toggleMob()">💻 DSA for Placements</button>
-  <button class="mnl" onclick="goto('jobs');toggleMob()">🚀 Job &amp; Research Opportunities</button>
+  <button class="mnl" onclick="requireLogin(()=>{goto('jobs');toggleMob();},'Browse &amp; apply for opportunities')">🚀 Job &amp; Research Opportunities</button>
 </div>
 
 <!-- ════════════════════════════════════════
@@ -88,7 +236,7 @@
     <div class="h-grid"></div>
     <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
     <div class="hero-content">
-      <div class="eyebrow"><span class="dot"></span>Free · No Login · Updated 2026</div>
+      <div class="eyebrow"><span class="dot"></span>Free · Updated 2026</div>
       <h1>
         <span class="h1a">One Platform.</span>
         <span class="h1b">Crack GATE, PSU &amp; Placements.</span>
@@ -140,7 +288,7 @@
           <div class="tc-foot"><div class="tc-cnt">450+ problems</div><div class="tc-arr">→</div></div>
         </div>
       </div>
-      <div class="tc tc-jobs" onclick="goto('jobs')">
+      <div class="tc tc-jobs" onclick="requireLogin(()=>goto('jobs'),'Browse &amp; apply for opportunities')">
         <div class="tc-top"><div class="tc-top-bg"></div>🚀<div class="tc-badge">Careers</div></div>
         <div class="tc-body">
           <div class="tc-title">Job &amp; Research Opportunities</div>
@@ -323,143 +471,174 @@
 <div id="page-gate" class="page">
 
   <!-- Hero — always visible -->
-  <div class="inner-hero" style="background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(139,92,246,0.04));">
-    <div class="ih-inner">
-      <div class="breadcrumb">
-        <span onclick="goto('home')" style="cursor:pointer">EaseAlgo</span>
-        <span class="bc-sep">/</span>
-        <span onclick="showGateHome()" style="cursor:pointer;color:var(--text2)" id="gate-breadcrumb-parent">GATE Preparation</span>
-        <span class="bc-sep" id="gate-breadcrumb-sep" style="display:none;">/</span>
-        <span style="color:var(--indigo)" id="gate-breadcrumb-label" style="display:none;"></span>
-      </div>
-      <div class="ih-h" id="gate-hero-title">📐 GATE Preparation Hub</div>
-      <div class="ih-sub" id="gate-hero-sub">Your complete GATE 2026 companion — real PYQs with solutions, subject-wise practice sets, topic drills, and mock tests with official scoring.</div>
-    </div>
-  </div>
+  <!-- Hero + 2 cards — text at top, cards centered in viewport -->
+  <div id="gate-hero-section" style="background:linear-gradient(180deg,rgba(99,102,241,0.07) 0%,rgba(99,102,241,0.03) 60%,var(--bg) 100%);min-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;">
 
-  <!-- ════ GATE HOME — only 2 cards, shown by default ════ -->
-  <div id="gate-home" style="background:linear-gradient(180deg,rgba(99,102,241,0.06) 0%,var(--bg) 100%);padding:2.5rem 1.5rem 3rem;">
-    <div style="max-width:1200px;margin:0 auto;">
+    <!-- Top: breadcrumb + title + subtitle -->
+    <div style="max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem 0;width:100%;box-sizing:border-box;">
+      <div id="gate-hero-wrap">
+        <div class="breadcrumb" style="margin-bottom:0.6rem;">
+          <span onclick="goto('home')" style="cursor:pointer">EaseAlgo</span>
+          <span class="bc-sep">/</span>
+          <span onclick="gotoGateHome()" style="cursor:pointer;color:var(--text2)" id="gate-breadcrumb-parent">GATE Preparation</span>
+          <span class="bc-sep" id="gate-breadcrumb-sep" style="display:none;">/</span>
+          <span style="color:var(--indigo)" id="gate-breadcrumb-label" style="display:none;"></span>
+        </div>
+        <div id="gate-hero-title" style="font-family:'Inter',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;letter-spacing:-0.5px;line-height:1.2;margin-bottom:0.5rem;">📐 GATE Preparation Hub</div>
+        <div id="gate-hero-sub" style="font-size:0.97rem;color:var(--text2);line-height:1.7;max-width:620px;font-family:'Inter',sans-serif;">Your complete GATE 2026 companion — real PYQs with solutions, subject-wise practice sets, topic drills, and mock tests with official scoring.</div>
 
-      <div style="text-align:center;margin-bottom:2rem;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--indigo);letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5rem;">Choose Your Mode</div>
-        <div style="font-family:'Inter',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;color:var(--text);">Where do you want to start?</div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
-
-        <!-- GATE PYQ Card -->
-        <button onclick="showGateSection('pyq')"
-          style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.08));
-            border:2px solid var(--indigo);border-radius:20px;padding:0;cursor:pointer;
-            text-align:left;transition:all 0.25s;overflow:hidden;
-            box-shadow:0 4px 30px rgba(99,102,241,0.2);"
-          onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(99,102,241,0.32)'"
-          onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 30px rgba(99,102,241,0.2)'">
-          <div style="padding:1.75rem 2rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;">
-              <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--indigo),var(--purple));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(99,102,241,0.4);">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              </div>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(99,102,241,0.15);color:var(--indigo);border:1px solid rgba(99,102,241,0.35);padding:3px 10px;border-radius:20px;">500+ PYQs</span>
-            </div>
-            <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.25rem;color:var(--text);letter-spacing:-0.3px;margin-bottom:0.5rem;">GATE PYQ</div>
-            <div style="font-size:0.88rem;color:var(--text2);line-height:1.7;font-family:'Inter',sans-serif;margin-bottom:1rem;">Solve real GATE questions filtered by year, subject or topic. Official −⅓ scoring included.</div>
-            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-              <span style="font-size:0.72rem;background:rgba(236,72,153,0.1);color:var(--pink);border:1px solid rgba(236,72,153,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">📅 Year-wise</span>
-              <span style="font-size:0.72rem;background:rgba(99,102,241,0.1);color:var(--indigo);border:1px solid rgba(99,102,241,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">📚 Subject-wise</span>
-              <span style="font-size:0.72rem;background:rgba(6,182,212,0.1);color:var(--cyan);border:1px solid rgba(6,182,212,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">🔬 Topic-wise</span>
-            </div>
+        <!-- Stats strip — only shown on home -->
+        <div id="gate-stats-strip" style="display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;">📅</div>
+            <div><div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--indigo);">313+</div><div style="font-size:0.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace;">Real PYQs</div></div>
           </div>
-          <div style="background:rgba(99,102,241,0.12);border-top:1px solid rgba(99,102,241,0.2);padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--indigo);font-weight:700;">Start practicing →</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--indigo)"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;">📚</div>
+            <div><div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--green);">30</div><div style="font-size:0.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace;">Subjects</div></div>
           </div>
-        </button>
-
-        <!-- Practice Sets Card -->
-        <button onclick="showGateSection('practice')"
-          style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(6,182,212,0.05));
-            border:2px solid var(--border);border-radius:20px;padding:0;cursor:pointer;
-            text-align:left;transition:all 0.25s;overflow:hidden;"
-          onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='var(--green)';this.style.boxShadow='0 12px 40px rgba(16,185,129,0.22)'"
-          onmouseout="this.style.transform='none';this.style.borderColor='var(--border)';this.style.boxShadow='none'">
-          <div style="padding:1.75rem 2rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;">
-              <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--green),var(--cyan));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(16,185,129,0.3);">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-              </div>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);padding:3px 10px;border-radius:20px;">30 Subjects</span>
-            </div>
-            <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.25rem;color:var(--text);letter-spacing:-0.3px;margin-bottom:0.5rem;">Practice Sets</div>
-            <div style="font-size:0.88rem;color:var(--text2);line-height:1.7;font-family:'Inter',sans-serif;margin-bottom:1rem;">Subject-wise curated questions — pick any topic and start drilling with instant feedback.</div>
-            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-              <span style="font-size:0.72rem;background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">🖥️ CS/IT</span>
-              <span style="font-size:0.72rem;background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">📡 ECE</span>
-              <span style="font-size:0.72rem;background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">⚙️ ME · CE · GA</span>
-            </div>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;">🎯</div>
+            <div><div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--amber);">16</div><div style="font-size:0.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace;">Mock Tests</div></div>
           </div>
-          <div style="background:rgba(16,185,129,0.07);border-top:1px solid rgba(16,185,129,0.15);padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--green);font-weight:700;">Browse subjects →</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--green)"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(236,72,153,0.12);border:1px solid rgba(236,72,153,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;">⚡</div>
+            <div><div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--pink);">−⅓</div><div style="font-size:0.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace;">Official Scoring</div></div>
           </div>
-        </button>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;">🖥️</div>
+            <div><div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--cyan);">CS · ECE · ME · CE</div><div style="font-size:0.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace;">All Streams</div></div>
+          </div>
+        </div>
 
       </div>
     </div>
-  </div>
+
+    <!-- Center: 2 cards fill remaining space -->
+    <div id="gate-home" style="flex:1;display:flex;align-items:center;">
+      <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem 3rem;width:100%;box-sizing:border-box;">
+
+        <!-- Feature tags row -->
+        <div style="display:flex;gap:0.6rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(99,102,241,0.08);color:var(--text3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">✓ Year-wise PYQs</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(99,102,241,0.08);color:var(--text3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">✓ Topic drill</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(99,102,241,0.08);color:var(--text3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">✓ Domain-wise mocks</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(99,102,241,0.08);color:var(--text3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">✓ Detailed solutions</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(99,102,241,0.08);color:var(--text3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">✓ Progress tracking</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(99,102,241,0.08);color:var(--text3);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">✓ Free forever</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+
+          <!-- GATE PYQ Card -->
+          <button onclick="gotoGateSection('pyq')"
+            style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.08));
+              border:2px solid var(--indigo);border-radius:20px;padding:0;cursor:pointer;
+              text-align:left;transition:all 0.25s;overflow:hidden;
+              box-shadow:0 4px 30px rgba(99,102,241,0.2);"
+            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(99,102,241,0.32)'"
+            onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 30px rgba(99,102,241,0.2)'">
+            <div style="padding:1.75rem 2rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;">
+                <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--indigo),var(--purple));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(99,102,241,0.4);">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(99,102,241,0.15);color:var(--indigo);border:1px solid rgba(99,102,241,0.35);padding:3px 10px;border-radius:20px;">500+ PYQs</span>
+              </div>
+              <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.25rem;color:var(--text);letter-spacing:-0.3px;margin-bottom:0.5rem;">GATE PYQ</div>
+              <div style="font-size:0.88rem;color:var(--text2);line-height:1.7;font-family:'Inter',sans-serif;margin-bottom:1rem;">Solve real GATE questions filtered by year, subject or topic. Official −⅓ scoring included.</div>
+              <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                <span style="font-size:0.72rem;background:rgba(236,72,153,0.1);color:var(--pink);border:1px solid rgba(236,72,153,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">📅 Year-wise</span>
+                <span style="font-size:0.72rem;background:rgba(99,102,241,0.1);color:var(--indigo);border:1px solid rgba(99,102,241,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">📚 Subject-wise</span>
+                <span style="font-size:0.72rem;background:rgba(6,182,212,0.1);color:var(--cyan);border:1px solid rgba(6,182,212,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">🔬 Topic-wise</span>
+              </div>
+            </div>
+            <div style="background:rgba(99,102,241,0.12);border-top:1px solid rgba(99,102,241,0.2);padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--indigo);font-weight:700;">Start practicing →</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--indigo)"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </button>
+
+          <!-- Practice Sets Card -->
+          <button onclick="gotoGateSection('practice')"
+            style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(6,182,212,0.05));
+              border:2px solid var(--border);border-radius:20px;padding:0;cursor:pointer;
+              text-align:left;transition:all 0.25s;overflow:hidden;"
+            onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='var(--green)';this.style.boxShadow='0 12px 40px rgba(16,185,129,0.22)'"
+            onmouseout="this.style.transform='none';this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+            <div style="padding:1.75rem 2rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;">
+                <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--green),var(--cyan));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(16,185,129,0.3);">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);padding:3px 10px;border-radius:20px;">30 Subjects</span>
+              </div>
+              <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.25rem;color:var(--text);letter-spacing:-0.3px;margin-bottom:0.5rem;">Practice Sets</div>
+              <div style="font-size:0.88rem;color:var(--text2);line-height:1.7;font-family:'Inter',sans-serif;margin-bottom:1rem;">Subject-wise curated questions — pick any topic and start drilling with instant feedback.</div>
+              <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                <span style="font-size:0.72rem;background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">🖥️ CS/IT</span>
+                <span style="font-size:0.72rem;background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">📡 ECE</span>
+                <span style="font-size:0.72rem;background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;">⚙️ ME · CE · GA</span>
+              </div>
+            </div>
+            <div style="background:rgba(16,185,129,0.07);border-top:1px solid rgba(16,185,129,0.15);padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--green);font-weight:700;">Browse subjects →</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--green)"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </button>
+
+        </div>
+      </div>
+    </div><!-- /gate-home -->
+
+  </div><!-- /gate-hero-section -->
 
   <!-- ── SECTION A: GATE PYQ ── hidden until clicked -->
   <div id="gate-sec-pyq" class="gate-section" style="display:none;">
 
-    <!-- Back + mode chooser bar -->
-    <div style="background:var(--bg2);border-bottom:1.5px solid var(--border);padding:1.25rem 1.5rem;">
+    <!-- Unified big control bar -->
+    <div style="background:var(--bg2);border-bottom:2px solid var(--border);padding:1.5rem;">
       <div style="max-width:1200px;margin:0 auto;">
-        <!-- Back button -->
-        <button onclick="showGateHome()" style="display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:9px;cursor:pointer;font-size:0.85rem;font-weight:600;font-family:'Inter',sans-serif;margin-bottom:1.1rem;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--indigo)';this.style.color='var(--indigo)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-          Back to GATE Home
-        </button>
-        <!-- 3 mode cards inline -->
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
-          <div style="font-size:0.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-right:0.25rem;">MODE:</div>
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+
+        <!-- Row 1: Mode selector — big cards -->
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1.1rem;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;min-width:48px;">Mode</span>
+          <div style="display:flex;gap:0.6rem;flex:1;flex-wrap:wrap;">
             <button id="pst-year" onclick="showPYQTab('year')"
-              style="display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;border:1.5px solid var(--pink);background:rgba(236,72,153,0.1);cursor:pointer;transition:all 0.18s;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--pink)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <span style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:700;color:var(--pink);">Year-wise</span>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;background:rgba(236,72,153,0.15);color:var(--pink);padding:1px 6px;border-radius:4px;">HOT</span>
+              style="display:flex;align-items:center;gap:9px;padding:11px 22px;border-radius:12px;border:2px solid var(--pink);background:rgba(236,72,153,0.12);cursor:pointer;transition:all 0.18s;flex:1;min-width:140px;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--pink)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--pink);">Year-wise</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;background:rgba(236,72,153,0.2);color:var(--pink);padding:2px 7px;border-radius:5px;">HOT</span>
             </button>
             <button id="pst-subject" onclick="showPYQTab('subject')"
-              style="display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.18s;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text2)"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-              <span style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;color:var(--text2);">Subject-wise</span>
+              style="display:flex;align-items:center;gap:9px;padding:11px 22px;border-radius:12px;border:2px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.18s;flex:1;min-width:140px;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text2)"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+              <span style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text2);">Subject-wise</span>
             </button>
             <button id="pst-topic" onclick="showPYQTab('topic')"
-              style="display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.18s;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text2)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;color:var(--text2);">Topic-wise</span>
+              style="display:flex;align-items:center;gap:9px;padding:11px 22px;border-radius:12px;border:2px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.18s;flex:1;min-width:140px;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text2)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text2);">Topic-wise</span>
             </button>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Stream + start bar -->
-    <div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:0.65rem 1.5rem;">
-      <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Stream:</span>
-        <div id="gate-stream-pills" style="display:flex;gap:0.35rem;flex-wrap:wrap;">
-          <button class="gpill on" onclick="setGateStream('cs',this)">CS/IT</button>
-          <button class="gpill"    onclick="setGateStream('ece',this)">ECE</button>
-          <button class="gpill"    onclick="setGateStream('me',this)">ME</button>
-          <button class="gpill"    onclick="setGateStream('ce',this)">CE</button>
-          <button class="gpill"    onclick="setGateStream('ga',this)">GA</button>
+        <!-- Row 2: Stream + count + start -->
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;min-width:48px;">Stream</span>
+          <div id="gate-stream-pills" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+            <button class="gpill on" onclick="setGateStream('cs',this)">CS/IT</button>
+            <button class="gpill"    onclick="setGateStream('ece',this)">ECE</button>
+            <button class="gpill"    onclick="setGateStream('me',this)">ME</button>
+            <button class="gpill"    onclick="setGateStream('ce',this)">CE</button>
+            <button class="gpill"    onclick="setGateStream('ga',this)">GA</button>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:0.6rem;">
+            <span id="gate-pyq-count" style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;background:rgba(236,72,153,0.08);border:1.5px solid rgba(236,72,153,0.25);color:var(--pink);padding:6px 14px;border-radius:8px;">0 Q</span>
+            <button id="gate-start-btn" onclick="startGatePYQQuiz()" disabled style="background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;border:none;cursor:pointer;padding:9px 22px;border-radius:10px;font-weight:700;font-size:0.88rem;opacity:0.5;transition:all 0.2s;font-family:'Inter',sans-serif;">▶ Start Quiz</button>
+          </div>
         </div>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:0.5rem;">
-          <span id="gate-pyq-count" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.2);color:var(--pink);padding:4px 10px;border-radius:6px;">0 Q</span>
-          <button id="gate-start-btn" onclick="startGatePYQQuiz()" disabled style="background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;border:none;cursor:pointer;padding:7px 18px;border-radius:8px;font-weight:700;font-size:0.78rem;opacity:0.5;transition:all 0.2s;">▶ Start Quiz</button>
-        </div>
+
       </div>
     </div>
 
@@ -469,15 +648,6 @@
 
   <!-- ── SECTION B: PRACTICE SETS ── hidden until clicked -->
   <div id="gate-sec-practice" class="gate-section" style="display:none;">
-    <!-- Back button -->
-    <div style="background:var(--bg2);border-bottom:1.5px solid var(--border);padding:1rem 1.5rem;">
-      <div style="max-width:1200px;margin:0 auto;">
-        <button onclick="showGateHome()" style="display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:9px;cursor:pointer;font-size:0.85rem;font-weight:600;font-family:'Inter',sans-serif;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-          Back to GATE Home
-        </button>
-      </div>
-    </div>
     <div style="max-width:1200px;margin:0 auto;padding:2rem 1.5rem;" id="gate-body-content"></div>
   </div>
 
@@ -976,6 +1146,7 @@
 <script src="js/quiz.js"></script>
 <script src="js/dsa.js"></script>
 <script src="js/jobs.js"></script>
+<script src="js/auth.js"></script>
 
 </body>
 </html>
