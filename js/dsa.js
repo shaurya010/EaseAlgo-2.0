@@ -221,7 +221,7 @@ function renderDSAProblems(problems) {
             <span>#</span><span>Problem</span><span style="text-align:center;">Difficulty</span><span>Companies</span>
           </div>
           ${probs.map((p, i) => `
-          <div onclick="window.open('${p.lc}','_blank')"
+          <div onclick="requireLogin(()=>window.open('${p.lc}','_blank'), 'Solve DSA problems on LeetCode')"
             style="display:grid;grid-template-columns:40px 1fr auto auto;align-items:center;gap:1rem;
             padding:0.75rem 1.1rem;cursor:pointer;transition:background 0.15s;
             ${i < probs.length-1 ? 'border-bottom:1px solid var(--border);' : ''}"
