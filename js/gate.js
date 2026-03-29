@@ -80,24 +80,34 @@ function setGateHero(title, sub, breadcrumbLabel){
 }
 
 function showGateHome(){
-  document.getElementById('gate-home').style.display='block';
+  const home = document.getElementById('gate-home');
+  if(home) home.style.display='flex';
+  const strip = document.getElementById('gate-stats-strip');
+  if(strip) strip.style.display='flex';
   document.getElementById('gate-sec-pyq').style.display='none';
   document.getElementById('gate-sec-practice').style.display='none';
+  const hs = document.getElementById('gate-hero-section');
+  if(hs){ hs.style.minHeight='calc(100vh - var(--nav-h))'; hs.style.alignItems=''; }
   setGateHero('📐 GATE Preparation Hub',
     'Your complete GATE 2026 companion — real PYQs with solutions, subject-wise practice sets, topic drills, and mock tests with official scoring.',
     null);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function showGateSection(sec){
-  document.getElementById('gate-home').style.display='none';
+function showGateSection(sec, tab){
+  const home = document.getElementById('gate-home');
+  if(home) home.style.display='none';
+  const strip = document.getElementById('gate-stats-strip');
+  if(strip) strip.style.display='none';
   document.getElementById('gate-sec-pyq').style.display   = sec==='pyq'      ? 'block' : 'none';
   document.getElementById('gate-sec-practice').style.display = sec==='practice' ? 'block' : 'none';
+  const hs = document.getElementById('gate-hero-section');
+  if(hs){ hs.style.minHeight='auto'; hs.style.alignItems='flex-start'; }
   if(sec==='pyq'){
     setGateHero('📅 GATE PYQ',
       'Solve real GATE previous year questions — filter by year, subject or topic. Official −⅓ negative marking.',
       'GATE PYQ');
-    showPYQTab('year');
+    showPYQTab(tab || 'year');
   }
   if(sec==='practice'){
     setGateHero('📚 GATE Practice Sets',
@@ -165,25 +175,30 @@ function renderGatePYQ(){
 function renderGateYearTab(el, qs){
   const years=[...new Set(qs.map(q=>q.y))].sort((a,b)=>b-a);
   el.innerHTML = `
-    <div class="gate-year-grid">
-      ${years.map(y=>{
-        const yqs=qs.filter(q=>q.y===y);
-        const e=yqs.filter(q=>q.d==='easy').length;
-        const h=yqs.filter(q=>q.d==='hard').length;
-        return `<div class="gyc" onclick="startGateYearQuiz(${y})">
-          <div class="gyc-y">GATE ${y}</div>
-          <div class="gyc-c">${yqs.length} Q</div>
-          <div style="display:flex;gap:3px;justify-content:center;margin-top:5px;flex-wrap:wrap;">
-            <span style="font-size:0.75rem;padding:1px 5px;border-radius:3px;background:rgba(16,185,129,0.1);color:var(--green);">${e} Easy</span>
-            <span style="font-size:0.75rem;padding:1px 5px;border-radius:3px;background:rgba(239,68,68,0.1);color:var(--red);">${h} Hard</span>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-    <div style="padding:0 1.5rem;margin-bottom:0.5rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">// All Questions — Click to solve</div>
-    </div>
-    <div style="padding:0 1.5rem 2rem;">${buildGatePQRows(qs)}</div>`;
+    <div style="width:100%;padding:1.75rem 1.5rem 2.5rem;">
+      <div style="margin-bottom:1.25rem;display:flex;align-items:center;gap:0.75rem;">
+        <div style="width:3px;height:20px;background:linear-gradient(135deg,var(--pink),var(--rose));border-radius:2px;"></div>
+        <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:1rem;color:var(--text);">Select a year — click to start full paper quiz</div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);margin-left:auto;">${years.length} papers</span>
+      </div>
+      <div class="gate-year-grid">
+        ${years.map(y=>{
+          const yqs=qs.filter(q=>q.y===y);
+          const e=yqs.filter(q=>q.d==='easy').length;
+          const m=yqs.filter(q=>q.d==='medium').length;
+          const h=yqs.filter(q=>q.d==='hard').length;
+          return `<div class="gyc" onclick="startGateYearQuiz(${y})">
+            <div class="gyc-y">GATE ${y}</div>
+            <div class="gyc-c">${yqs.length} Questions</div>
+            <div style="display:flex;gap:4px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+              <span style="font-size:0.7rem;padding:2px 7px;border-radius:5px;background:rgba(16,185,129,0.1);color:var(--green);">${e}E</span>
+              <span style="font-size:0.7rem;padding:2px 7px;border-radius:5px;background:rgba(245,158,11,0.1);color:var(--amber);">${m}M</span>
+              <span style="font-size:0.7rem;padding:2px 7px;border-radius:5px;background:rgba(239,68,68,0.1);color:var(--red);">${h}H</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
 }
 
 function renderGateSubjectTab(el, qs){
@@ -334,49 +349,251 @@ function renderGate(){
     'GA':    { color:'#ec4899', bg:'rgba(236,72,153,0.08)',  border:'rgba(236,72,153,0.25)',  emoji:'🧠', desc:'General Aptitude' },
   };
 
+  // ── Domain-wise Mock Test definitions ──
+  const DOMAIN_MOCKS = [
+    {
+      stream: 'CS/IT', emoji: '🖥️',
+      color: '#6366f1', bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.25)', glow: 'rgba(99,102,241,0.2)',
+      desc: 'Computer Science & Information Technology',
+      tests: [
+        { id:'cs-1', label:'CS Mock Test 1', tag:'Foundation',  subjects:['ds','algo','os','dbms'] },
+        { id:'cs-2', label:'CS Mock Test 2', tag:'Systems',     subjects:['cn','co','compiler','toc'] },
+        { id:'cs-3', label:'CS Mock Test 3', tag:'Theory',      subjects:['dm','se','prog','dl'] },
+        { id:'cs-4', label:'CS Mock Test 4', tag:'Full Paper ⭐', subjects:['ds','algo','os','dbms','cn','toc','compiler','co','dm','se','prog','dl'] },
+      ]
+    },
+    {
+      stream: 'ECE', emoji: '📡',
+      color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', glow: 'rgba(245,158,11,0.18)',
+      desc: 'Electronics & Communication Engineering',
+      tests: [
+        { id:'ece-1', label:'ECE Mock Test 1', tag:'Circuits',  subjects:['edc','ade','signals'] },
+        { id:'ece-2', label:'ECE Mock Test 2', tag:'Systems',   subjects:['control','comm','emf'] },
+        { id:'ece-3', label:'ECE Mock Test 3', tag:'Full Paper ⭐', subjects:['signals','edc','control','ade','emf','comm'] },
+      ]
+    },
+    {
+      stream: 'ME', emoji: '⚙️',
+      color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', glow: 'rgba(16,185,129,0.18)',
+      desc: 'Mechanical Engineering',
+      tests: [
+        { id:'me-1', label:'ME Mock Test 1', tag:'Thermal',    subjects:['thermo','ht','fm'] },
+        { id:'me-2', label:'ME Mock Test 2', tag:'Design',     subjects:['som','tom','mfg'] },
+        { id:'me-3', label:'ME Mock Test 3', tag:'Full Paper ⭐', subjects:['thermo','fm','som','tom','mfg','ht'] },
+      ]
+    },
+    {
+      stream: 'CE', emoji: '🏗️',
+      color: '#06b6d4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.25)', glow: 'rgba(6,182,212,0.18)',
+      desc: 'Civil Engineering',
+      tests: [
+        { id:'ce-1', label:'CE Mock Test 1', tag:'Structural',  subjects:['struct','geotech','concrete'] },
+        { id:'ce-2', label:'CE Mock Test 2', tag:'Env & Survey', subjects:['enveng','surveying'] },
+        { id:'ce-3', label:'CE Mock Test 3', tag:'Full Paper ⭐', subjects:['struct','geotech','concrete','enveng','surveying'] },
+      ]
+    },
+    {
+      stream: 'GA', emoji: '🧠',
+      color: '#ec4899', bg: 'rgba(236,72,153,0.08)', border: 'rgba(236,72,153,0.25)', glow: 'rgba(236,72,153,0.18)',
+      desc: 'General Aptitude (All Streams)',
+      tests: [
+        { id:'ga-1', label:'GA Mock Test 1', tag:'Quantitative', subjects:['quant'] },
+        { id:'ga-2', label:'GA Mock Test 2', tag:'Verbal & Logic', subjects:['lr','verbal'] },
+        { id:'ga-3', label:'GA Mock Test 3', tag:'Full GA ⭐',    subjects:['quant','lr','verbal'] },
+      ]
+    },
+  ];
+
   el.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:2rem;">
-      <div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.3rem;">// Practice Sets</div>
-        <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text);">Choose a Subject to Practice</div>
-      </div>
-      <button onclick="quickGateQuiz()" style="background:var(--indigo);color:#fff;border:none;padding:9px 20px;border-radius:9px;font-family:'Inter',sans-serif;font-weight:700;font-size:0.88rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⚡ Random Quiz</button>
-    </div>
-    ${streams.map(st=>{
-      const meta = streamMeta[st] || { color:'#6366f1', bg:'rgba(99,102,241,0.08)', border:'rgba(99,102,241,0.25)', emoji:'📐', desc:st };
-      const subs = GATE_SUBJS.filter(s=>s.stream===st);
-      return `<div style="margin-bottom:2.5rem;">
-        <!-- Stream header banner -->
-        <div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 1.25rem;
-          background:${meta.bg};border:1.5px solid ${meta.border};border-radius:12px;
-          margin-bottom:1rem;">
-          <span style="font-size:1.6rem;">${meta.emoji}</span>
+    <!-- ════ TAB SWITCHER — big, visible ════ -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;">
+
+      <div id="tab-mock" onclick="switchPracticeTab('mock')" style="background:linear-gradient(135deg,rgba(236,72,153,0.18),rgba(139,92,246,0.10));
+        border:2px solid var(--pink);border-radius:16px;padding:1.4rem 1.75rem;cursor:pointer;transition:all 0.2s;">
+        <div style="display:flex;align-items:center;gap:0.85rem;margin-bottom:0.5rem;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--pink),var(--rose));
+            display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(236,72,153,0.4);">🎯</div>
           <div>
-            <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:${meta.color};letter-spacing:-0.3px;">${st}</div>
-            <div style="font-size:0.82rem;color:var(--text2);margin-top:1px;font-family:'Inter',sans-serif;">${meta.desc} · ${subs.length} subjects</div>
+            <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--text);letter-spacing:-0.3px;">Domain-wise Mock Tests</div>
+            <div style="font-size:0.78rem;color:var(--pink);font-family:'Inter',sans-serif;margin-top:1px;font-weight:600;">Full-length papers · Timer · −⅓ scoring</div>
           </div>
         </div>
-        <!-- Subject cards -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:0.75rem;">
-          ${subs.map(s=>`
-          <div onclick="startSubjQuiz('${s.id}','gate')"
-            style="background:var(--card);border:1.5px solid var(--border);border-radius:13px;
-              padding:1.1rem 1.15rem;cursor:pointer;transition:all 0.2s;
-              display:flex;align-items:center;gap:0.75rem;"
-            onmouseover="this.style.borderColor='${s.color}';this.style.background='rgba(0,0,0,0.05)';this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--card)';this.style.transform='none'">
-            <span style="font-size:1.4rem;flex-shrink:0;">${s.emoji}</span>
-            <div style="flex:1;min-width:0;">
-              <div style="font-weight:700;font-size:0.92rem;font-family:'Inter',sans-serif;
-                white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);letter-spacing:-0.1px;">${s.name}</div>
-              <div style="font-size:0.76rem;color:var(--text2);font-family:'JetBrains Mono',monospace;margin-top:2px;">
-                ${s.cnt} Practice Q
-              </div>
-            </div>
-          </div>`).join('')}
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.5rem;">
+          <span style="font-size:0.68rem;background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">CS/IT</span>
+          <span style="font-size:0.68rem;background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">ECE</span>
+          <span style="font-size:0.68rem;background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">ME</span>
+          <span style="font-size:0.68rem;background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">CE</span>
+          <span style="font-size:0.68rem;background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">GA</span>
+          <span style="font-size:0.68rem;background:rgba(236,72,153,0.2);color:var(--pink);border:1px solid rgba(236,72,153,0.4);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-weight:700;">16 Tests</span>
         </div>
-      </div>`;
-    }).join('')}`;
+      </div>
+
+      <div id="tab-subj" onclick="switchPracticeTab('subj')" style="background:var(--card);
+        border:2px solid var(--border);border-radius:16px;padding:1.4rem 1.75rem;cursor:pointer;transition:all 0.2s;"
+        onmouseover="this.style.borderColor='var(--green)';this.style.boxShadow='0 6px 24px rgba(16,185,129,0.15)'"
+        onmouseout="if(!this.classList.contains('active')){this.style.borderColor='var(--border)';this.style.boxShadow='none'}">
+        <div style="display:flex;align-items:center;gap:0.85rem;margin-bottom:0.5rem;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--cyan));
+            display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(16,185,129,0.35);">📚</div>
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:var(--text);letter-spacing:-0.3px;">Subject-wise Practice</div>
+            <div style="font-size:0.78rem;color:var(--green);font-family:'Inter',sans-serif;margin-top:1px;font-weight:600;">30 subjects · Instant feedback · Any topic</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.5rem;">
+          <span style="font-size:0.68rem;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">Data Structures</span>
+          <span style="font-size:0.68rem;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">Algorithms</span>
+          <span style="font-size:0.68rem;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">OS</span>
+          <span style="font-size:0.68rem;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;">+27 more</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ MOCK TESTS PANEL ════ -->
+    <div id="panel-mock">
+      ${DOMAIN_MOCKS.map(domain => `
+      <div style="margin-bottom:1.75rem;">
+        <div style="display:flex;align-items:center;gap:0.85rem;padding:0.9rem 1.25rem;
+          background:${domain.bg};border:1.5px solid ${domain.border};border-radius:13px;margin-bottom:0.85rem;">
+          <span style="font-size:1.5rem;">${domain.emoji}</span>
+          <div style="flex:1;">
+            <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1rem;color:${domain.color};letter-spacing:-0.2px;">${domain.stream}</div>
+            <div style="font-size:0.78rem;color:var(--text2);font-family:'Inter',sans-serif;">${domain.desc}</div>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${domain.color};opacity:0.7;">${domain.tests.length} tests</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0.75rem;">
+          ${domain.tests.map(t => {
+            const pool = t.subjects.flatMap(id => QB[id]||[]);
+            const total = Math.min(30, pool.length);
+            const easy  = pool.filter(q=>q.d==='easy').length;
+            const med   = pool.filter(q=>q.d==='medium').length;
+            const hard  = pool.filter(q=>q.d==='hard').length;
+            const isFull = t.tag.includes('⭐');
+            return `<div onclick="startMockTest('${t.id}')"
+              style="background:var(--card);border:1.5px solid ${isFull ? domain.border : 'var(--border)'};
+                border-radius:13px;padding:1.1rem 1.2rem;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;"
+              onmouseover="this.style.borderColor='${domain.color}';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 28px ${domain.glow}'"
+              onmouseout="this.style.borderColor='${isFull ? domain.border : 'var(--border)'}';this.style.transform='none';this.style.boxShadow='none'">
+              <div style="position:absolute;top:0;left:0;right:0;height:2.5px;background:${domain.color};opacity:${isFull?'0.9':'0.4'};"></div>
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.5rem;margin-top:0.15rem;">
+                <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:0.92rem;color:var(--text);">${t.label}</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;background:${domain.color}20;color:${domain.color};border:1px solid ${domain.color}40;padding:2px 7px;border-radius:4px;white-space:nowrap;margin-left:0.4rem;">${t.tag}</span>
+              </div>
+              <div style="font-size:0.76rem;color:var(--text3);font-family:'Inter',sans-serif;margin-bottom:0.7rem;">
+                ${t.subjects.map(id=>{const s=GATE_SUBJS.find(x=>x.id===id);return s?s.name:id;}).slice(0,3).join(' · ')}${t.subjects.length>3?` +${t.subjects.length-3} more`:''}
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;gap:4px;">
+                  <span style="font-size:0.65rem;padding:2px 7px;border-radius:4px;background:rgba(16,185,129,0.1);color:var(--green);font-family:'JetBrains Mono',monospace;">${easy}E</span>
+                  <span style="font-size:0.65rem;padding:2px 7px;border-radius:4px;background:rgba(245,158,11,0.1);color:var(--amber);font-family:'JetBrains Mono',monospace;">${med}M</span>
+                  <span style="font-size:0.65rem;padding:2px 7px;border-radius:4px;background:rgba(239,68,68,0.1);color:var(--red);font-family:'JetBrains Mono',monospace;">${hard}H</span>
+                </div>
+                <span style="font-size:0.78rem;color:${domain.color};font-weight:700;font-family:'Inter',sans-serif;">${total}Q →</span>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <!-- ════ SUBJECT PRACTICE PANEL ════ -->
+    <div id="panel-subj" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
+        <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text2);">Choose a subject and start drilling</div>
+        <button onclick="quickGateQuiz()" style="background:var(--indigo);color:#fff;border:none;padding:9px 20px;border-radius:9px;font-family:'Inter',sans-serif;font-weight:700;font-size:0.88rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⚡ Random Quiz</button>
+      </div>
+      ${streams.map(st=>{
+        const meta = streamMeta[st] || { color:'#6366f1', bg:'rgba(99,102,241,0.08)', border:'rgba(99,102,241,0.25)', emoji:'📐', desc:st };
+        const subs = GATE_SUBJS.filter(s=>s.stream===st);
+        return `<div style="margin-bottom:2rem;">
+          <div style="display:flex;align-items:center;gap:1rem;padding:0.9rem 1.25rem;
+            background:${meta.bg};border:1.5px solid ${meta.border};border-radius:12px;margin-bottom:1rem;">
+            <span style="font-size:1.6rem;">${meta.emoji}</span>
+            <div>
+              <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:${meta.color};letter-spacing:-0.3px;">${st}</div>
+              <div style="font-size:0.82rem;color:var(--text2);margin-top:1px;font-family:'Inter',sans-serif;">${meta.desc} · ${subs.length} subjects</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:0.75rem;">
+            ${subs.map(s=>`
+            <div onclick="startSubjQuiz('${s.id}','gate')"
+              style="background:var(--card);border:1.5px solid var(--border);border-radius:13px;
+                padding:1.1rem 1.15rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.75rem;"
+              onmouseover="this.style.borderColor='${s.color}';this.style.background='rgba(0,0,0,0.05)';this.style.transform='translateY(-2px)'"
+              onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--card)';this.style.transform='none'">
+              <span style="font-size:1.4rem;flex-shrink:0;">${s.emoji}</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.92rem;font-family:'Inter',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);">${s.name}</div>
+                <div style="font-size:0.76rem;color:var(--text2);font-family:'JetBrains Mono',monospace;margin-top:2px;">${s.cnt} Questions</div>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  // init tab state
+  _practiceTab = 'mock';
+}
+
+let _practiceTab = 'mock';
+
+function switchPracticeTab(tab) {
+  _practiceTab = tab;
+  const mock = document.getElementById('panel-mock');
+  const subj = document.getElementById('panel-subj');
+  const tabMock = document.getElementById('tab-mock');
+  const tabSubj = document.getElementById('tab-subj');
+  if (!mock || !subj) return;
+
+  if (tab === 'mock') {
+    mock.style.display = 'block';
+    subj.style.display = 'none';
+    // Active tab styling
+    tabMock.style.background = 'linear-gradient(135deg,rgba(236,72,153,0.18),rgba(139,92,246,0.10))';
+    tabMock.style.borderColor = 'var(--pink)';
+    tabSubj.style.background = 'var(--card)';
+    tabSubj.style.borderColor = 'var(--border)';
+    tabSubj.style.boxShadow = 'none';
+  } else {
+    mock.style.display = 'none';
+    subj.style.display = 'block';
+    // Active tab styling
+    tabSubj.style.background = 'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.08))';
+    tabSubj.style.borderColor = 'var(--green)';
+    tabSubj.style.boxShadow = '0 4px 20px rgba(16,185,129,0.15)';
+    tabSubj.onmouseover = null; tabSubj.onmouseout = null;
+    tabMock.style.background = 'var(--card)';
+    tabMock.style.borderColor = 'var(--border)';
+  }
+}
+
+function startMockTest(id){
+  const ALL_TESTS = [
+    {id:'cs-1', label:'CS Mock Test 1',  subjects:['ds','algo','os','dbms']},
+    {id:'cs-2', label:'CS Mock Test 2',  subjects:['cn','co','compiler','toc']},
+    {id:'cs-3', label:'CS Mock Test 3',  subjects:['dm','se','prog','dl']},
+    {id:'cs-4', label:'CS Mock Test 4 — Full', subjects:['ds','algo','os','dbms','cn','toc','compiler','co','dm','se','prog','dl']},
+    {id:'ece-1',label:'ECE Mock Test 1', subjects:['edc','ade','signals']},
+    {id:'ece-2',label:'ECE Mock Test 2', subjects:['control','comm','emf']},
+    {id:'ece-3',label:'ECE Mock Test 3 — Full', subjects:['signals','edc','control','ade','emf','comm']},
+    {id:'me-1', label:'ME Mock Test 1',  subjects:['thermo','ht','fm']},
+    {id:'me-2', label:'ME Mock Test 2',  subjects:['som','tom','mfg']},
+    {id:'me-3', label:'ME Mock Test 3 — Full',  subjects:['thermo','fm','som','tom','mfg','ht']},
+    {id:'ce-1', label:'CE Mock Test 1',  subjects:['struct','geotech','concrete']},
+    {id:'ce-2', label:'CE Mock Test 2',  subjects:['enveng','surveying']},
+    {id:'ce-3', label:'CE Mock Test 3 — Full',  subjects:['struct','geotech','concrete','enveng','surveying']},
+    {id:'ga-1', label:'GA Mock Test 1',  subjects:['quant']},
+    {id:'ga-2', label:'GA Mock Test 2',  subjects:['lr','verbal']},
+    {id:'ga-3', label:'GA Mock Test 3 — Full',  subjects:['quant','lr','verbal']},
+  ];
+  const mock = ALL_TESTS.find(m=>m.id===id);
+  if(!mock){ alert('Mock test not found.'); return; }
+  const pool = mock.subjects.flatMap(s => QB[s]||[]);
+  if(pool.length === 0){ alert('Questions coming soon for this test! 🚧'); return; }
+  const qs = shuffle([...pool]).slice(0, Math.min(30, pool.length));
+  launchQuiz(qs, `🎯 ${mock.label}`, 'gate');
 }
 
 function getStream(s){return{CS_IT:'cs',ECE:'ece',ME:'me',CE:'ce',GA:'ga','CS/IT':'cs'}[s]||'cs';}
@@ -389,4 +606,3 @@ function goPYQSubj(name,stream){
   const pills=document.querySelectorAll('.gpill');
   if(pills[map[stream]])pills[map[stream]].classList.add('on');
 }
-
