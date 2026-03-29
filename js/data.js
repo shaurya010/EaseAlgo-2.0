@@ -332,91 +332,249 @@ const PYQ = [
 
 // Practice QB for GATE subjects
 const QB = {
+
+// ── DATA STRUCTURES ──
 ds:[
-  {q:"Which data structure is used for BFS?",opts:["Stack","Queue","Heap","Linked List"],ans:1,d:'easy',m:1,e:"BFS uses a queue (FIFO) to explore level by level."},
-  {q:"In a min-heap, root always contains:",opts:["Maximum","Minimum","Average","Random"],ans:1,d:'easy',m:1,e:"Min-heap property: root is always the minimum element."},
-  {q:"AVL tree rotation for Left-Right case:",opts:["Single left rotation","Single right rotation","Left then right rotation","Right then left rotation"],ans:2,d:'hard',m:2,e:"LR case (left child has right-heavy subtree): left rotate on left child, then right rotate on node."},
-  {q:"Amortized time for push on dynamic array (doubling strategy):",opts:["O(n)","O(log n)","O(1)","O(n log n)"],ans:2,d:'medium',m:2,e:"n pushes: cost 1+1+1+2+1+1+1+4+... = O(2n) total → O(1) amortized."},
-  {q:"Graph with V vertices, min edges to ensure connectivity:",opts:["V","V+1","V−1","V²/2"],ans:2,d:'easy',m:1,e:"Spanning tree: V−1 edges connect V vertices minimally."},
+  {q:"Which data structure is used for BFS traversal?",opts:["Stack","Queue","Heap","Linked List"],ans:1,d:'easy',m:1,e:"BFS uses a queue (FIFO) to explore nodes level by level."},
+  {q:"In a min-heap, the root always contains the:",opts:["Maximum element","Minimum element","Median element","Random element"],ans:1,d:'easy',m:1,e:"Min-heap property: parent ≤ children, so root is always the minimum."},
+  {q:"AVL tree rotation required for the Left-Right (LR) case:",opts:["Single left rotation","Single right rotation","Left rotation then right rotation","Right rotation then left rotation"],ans:2,d:'hard',m:2,e:"LR case: left child has right-heavy subtree. Fix: left rotate on left child, then right rotate on unbalanced node."},
+  {q:"Amortized time for push on a dynamic array (doubling strategy):",opts:["O(n)","O(log n)","O(1)","O(n log n)"],ans:2,d:'medium',m:2,e:"n pushes cost 1+1+…+1+2+1+…+1+4+… = O(2n) total → O(1) amortized per push."},
+  {q:"Minimum number of edges to connect V vertices (spanning tree):",opts:["V","V+1","V−1","V(V−1)/2"],ans:2,d:'easy',m:1,e:"A spanning tree on V vertices always has exactly V−1 edges."},
+  {q:"In a hash table with chaining, worst-case lookup is:",opts:["O(1)","O(log n)","O(n)","O(n²)"],ans:2,d:'medium',m:2,e:"Worst case: all keys hash to same slot → one chain of length n → O(n)."},
+  {q:"Which operation is NOT O(1) in a doubly linked list?",opts:["Insert at head","Delete a given node (pointer given)","Search for a value","Insert after a given node"],ans:2,d:'easy',m:1,e:"Search requires traversal → O(n). Insert/delete with pointer are O(1)."},
+  {q:"A full binary tree with n internal nodes has how many leaf nodes?",opts:["n","n+1","n−1","2n"],ans:1,d:'medium',m:2,e:"Full binary tree: every node has 0 or 2 children. Leaves = internal nodes + 1 = n+1."},
+  {q:"Stack is a __ data structure:",opts:["FIFO","LIFO","Priority-based","Random access"],ans:1,d:'easy',m:1,e:"Stack: Last In First Out (LIFO). Push/pop from the same end (top)."},
+  {q:"Height of a complete binary tree with n nodes:",opts:["n","n/2","⌊log₂n⌋","⌈log₂n⌉"],ans:2,d:'medium',m:2,e:"Complete binary tree height = ⌊log₂n⌋. E.g., 7 nodes → height 2 (0-indexed)."},
+  {q:"In a BST, inorder traversal gives:",opts:["Preorder sequence","Sorted ascending order","Reverse sorted order","Level-order sequence"],ans:1,d:'easy',m:1,e:"BST inorder (Left→Root→Right) visits nodes in ascending sorted order."},
+  {q:"A graph with 5 vertices has 10 edges. It is a:",opts:["Tree","Complete graph K5","Sparse graph","Bipartite graph"],ans:1,d:'medium',m:2,e:"K5 has 5×4/2 = 10 edges. So this must be the complete graph K5."},
+  {q:"Which sorting algorithm is stable AND has O(n log n) worst-case?",opts:["Quicksort","Heapsort","Merge sort","Selection sort"],ans:2,d:'medium',m:2,e:"Merge sort: stable (preserves equal element order) and O(n log n) worst case."},
+  {q:"Trie data structure is best suited for:",opts:["Integer sorting","Prefix-based string search","Graph traversal","Matrix multiplication"],ans:1,d:'easy',m:1,e:"Trie: each node = character. Efficient for prefix search, autocomplete, dictionary operations."},
+  {q:"Circular queue with array of size n can hold at most how many elements?",opts:["n","n−1","n+1","n/2"],ans:1,d:'medium',m:2,e:"To distinguish full from empty, circular queue using array[n] holds at most n−1 elements."},
 ],
+
+// ── ALGORITHMS ──
 algo:[
-  {q:"Binary Search worst case comparisons for 64 elements:",opts:["6","7","8","9"],ans:1,d:'easy',m:1,e:"⌊log₂64⌋+1 = 6+1 = 7 comparisons worst case."},
-  {q:"Merge sort divides array in half each time. Recurrence:",opts:["T(n)=T(n/2)+O(n)","T(n)=2T(n/2)+O(n)","T(n)=T(n-1)+O(n)","T(n)=4T(n/2)+O(n)"],ans:1,d:'medium',m:2,e:"Merge sort: 2 halves each T(n/2), merge step O(n) → T(n)=2T(n/2)+O(n) → O(n log n)."},
-  {q:"Greedy algorithm for Fractional Knapsack: sort by:",opts:["Value","Weight","Value/Weight ratio descending","Random"],ans:2,d:'easy',m:1,e:"Fractional knapsack: pick items with highest value-to-weight ratio first."},
-  {q:"Which problem is solved by Bellman-Ford but not Dijkstra?",opts:["Single-source shortest path","Negative weights","MST","Topological sort"],ans:1,d:'medium',m:2,e:"Bellman-Ford handles negative edge weights (detects negative cycles). Dijkstra fails on negative weights."},
-  {q:"LCS time complexity for strings of length m and n:",opts:["O(m+n)","O(mn)","O(m²n)","O(m log n)"],ans:1,d:'medium',m:2,e:"LCS DP table: m×n cells, O(1) per cell → O(mn) time."},
+  {q:"Binary search worst-case comparisons for 64 elements:",opts:["6","7","8","9"],ans:1,d:'easy',m:1,e:"⌊log₂64⌋+1 = 6+1 = 7 comparisons in worst case."},
+  {q:"Merge sort recurrence relation:",opts:["T(n)=T(n/2)+O(n)","T(n)=2T(n/2)+O(n)","T(n)=T(n−1)+O(n)","T(n)=4T(n/2)+O(n)"],ans:1,d:'medium',m:2,e:"Merge sort: 2 halves each T(n/2), merge step O(n) → T(n)=2T(n/2)+O(n) → O(n log n)."},
+  {q:"Greedy algorithm for Fractional Knapsack selects items by:",opts:["Highest value first","Lowest weight first","Highest value/weight ratio first","Random order"],ans:2,d:'easy',m:1,e:"Fractional knapsack: greedily take items with highest value-to-weight ratio."},
+  {q:"Bellman-Ford handles what Dijkstra cannot?",opts:["Single-source shortest path","Negative edge weights","MST","Topological sort"],ans:1,d:'medium',m:2,e:"Bellman-Ford handles negative edge weights and detects negative cycles. Dijkstra requires non-negative edges."},
+  {q:"LCS time complexity for strings of length m and n:",opts:["O(m+n)","O(mn)","O(m²)","O(m log n)"],ans:1,d:'medium',m:2,e:"LCS DP: fill an m×n table, O(1) per cell → O(mn) total."},
+  {q:"Which algorithm finds MST using a priority queue (min-heap)?",opts:["Kruskal's","Prim's","Floyd-Warshall","Bellman-Ford"],ans:1,d:'easy',m:1,e:"Prim's algorithm uses a min-heap (priority queue) to always pick the minimum weight edge."},
+  {q:"The recurrence T(n) = T(n−1) + O(1) solves to:",opts:["O(1)","O(log n)","O(n)","O(n²)"],ans:2,d:'easy',m:1,e:"T(n)=T(n−1)+c unrolls n times → T(n) = n×c = O(n)."},
+  {q:"Which problem exhibits optimal substructure but NOT overlapping subproblems?",opts:["Fibonacci","Matrix chain multiplication","Binary search","Longest common subsequence"],ans:2,d:'hard',m:2,e:"Binary search has optimal substructure but no overlapping subproblems — it's divide and conquer, not DP."},
+  {q:"Time complexity of building a binary heap from n elements:",opts:["O(n log n)","O(n)","O(log n)","O(n²)"],ans:1,d:'medium',m:2,e:"Bottom-up heap construction (heapify) is O(n) — tighter than the naive O(n log n) analysis."},
+  {q:"Which is the correct running time of DFS on a graph with V vertices and E edges?",opts:["O(V)","O(E)","O(V+E)","O(V×E)"],ans:2,d:'easy',m:1,e:"DFS visits each vertex once and traverses each edge once → O(V+E)."},
+  {q:"Strassen's algorithm for matrix multiplication has complexity:",opts:["O(n³)","O(n^2.81)","O(n²)","O(n² log n)"],ans:1,d:'hard',m:2,e:"Strassen reduces 8 multiplications to 7 per level → O(n^log₂7) ≈ O(n^2.807)."},
+  {q:"Which sorting algorithm has the best average case but O(n²) worst case?",opts:["Merge sort","Heapsort","Quicksort","Bubble sort"],ans:2,d:'medium',m:2,e:"Quicksort: O(n log n) average, O(n²) worst case (when pivot is always min/max)."},
+  {q:"A topological sort is only possible for:",opts:["Any directed graph","Undirected graphs","Directed Acyclic Graphs (DAGs)","Complete graphs"],ans:2,d:'easy',m:1,e:"Topological ordering exists if and only if the directed graph has no cycles (DAG)."},
+  {q:"In dynamic programming, memoization refers to:",opts:["Storing subproblem results to avoid recomputation","Sorting input first","Using greedy choice","Divide and conquer"],ans:0,d:'easy',m:1,e:"Memoization: cache results of subproblems (top-down DP) so each is computed only once."},
 ],
+
+// ── OPERATING SYSTEMS ──
 os:[
-  {q:"Which scheduling algorithm has minimum average waiting time for CPU burst-centric workloads?",opts:["FCFS","SJF","Round Robin","Priority"],ans:1,d:'medium',m:2,e:"SJF (Shortest Job First) minimizes average waiting time — optimal for non-preemptive."},
-  {q:"Critical section problem requirements: mutual exclusion, progress, and:",opts:["Deadlock","Bounded waiting","Starvation","Priority"],ans:1,d:'easy',m:1,e:"Three requirements: mutual exclusion, progress (non-deadlock), bounded waiting (no starvation)."},
-  {q:"Page fault occurs when:",opts:["Disk is full","Required page not in RAM","Cache miss","TLB miss"],ans:1,d:'easy',m:1,e:"Page fault: page referenced is not in physical memory → OS loads from disk."},
-  {q:"Mutex vs Semaphore: mutex can only be released by:",opts:["Any process","The process that acquired it","OS","Interrupt handler"],ans:1,d:'medium',m:2,e:"Mutex has ownership — only the thread that locked it can unlock it. Semaphore has no ownership."},
-  {q:"Virtual memory page size tradeoff: larger pages mean:",opts:["Less internal fragmentation","More internal fragmentation but fewer page table entries","More page faults","Smaller page table"],ans:1,d:'hard',m:2,e:"Larger pages: less table entries (good) but more internal fragmentation and higher I/O cost per fault."},
+  {q:"Which scheduling algorithm has minimum average waiting time for known burst times?",opts:["FCFS","SJF (non-preemptive)","Round Robin","Priority"],ans:1,d:'medium',m:2,e:"SJF (Shortest Job First) is provably optimal for minimizing average waiting time."},
+  {q:"Three requirements for solving the critical section problem:",opts:["Mutex, Progress, Bounded Waiting","Lock, Unlock, Interrupt","Semaphore, Monitor, Barrier","Deadlock, Starvation, Race"],ans:0,d:'easy',m:1,e:"Peterson's solution and all CS solutions must satisfy: mutual exclusion, progress, bounded waiting."},
+  {q:"Page fault occurs when:",opts:["Disk becomes full","Required page is not in physical memory","Cache miss occurs","TLB miss occurs"],ans:1,d:'easy',m:1,e:"Page fault: page referenced is not in RAM → OS loads it from disk (swap space)."},
+  {q:"Mutex vs Semaphore — a mutex can only be released by:",opts:["Any process","The thread/process that acquired it","The OS scheduler","An interrupt handler"],ans:1,d:'medium',m:2,e:"Mutex has ownership semantics — only the locking thread can unlock it. Semaphore has no ownership."},
+  {q:"Larger page size in virtual memory leads to:",opts:["Less internal fragmentation","More internal fragmentation but fewer page table entries","More page faults","Smaller TLB"],ans:1,d:'hard',m:2,e:"Larger pages: fewer table entries (good) but more internal fragmentation (wasted space at end of last page)."},
+  {q:"Which process state transition is caused by a timer interrupt?",opts:["Running → Blocked","Blocked → Ready","Running → Ready","New → Ready"],ans:2,d:'easy',m:1,e:"Timer interrupt causes preemption: running process moves to ready queue (Running → Ready)."},
+  {q:"Thrashing in virtual memory occurs because:",opts:["Too much RAM","CPU utilization is 100%","Processes spend more time swapping pages than executing","TLB is too small"],ans:2,d:'medium',m:2,e:"Thrashing: working sets exceed available frames → constant page faults → CPU mostly idle waiting for I/O."},
+  {q:"A reader-writer problem: multiple readers can read __ simultaneously:",opts:["Only if no writer","Never","Always","Only 2 at a time"],ans:0,d:'easy',m:1,e:"Multiple readers can read concurrently but only if no writer holds the lock. Writer needs exclusive access."},
+  {q:"The fork() system call returns:",opts:["0 to both parent and child","Child PID to parent, 0 to child","0 to parent, child PID to child","Child PID to both"],ans:1,d:'medium',m:2,e:"fork(): returns child's PID to parent process, returns 0 to child process. Returns -1 on failure."},
+  {q:"LRU page replacement uses the principle of:",opts:["Temporal locality","Spatial locality","Random replacement","Working set"],ans:0,d:'easy',m:1,e:"LRU exploits temporal locality — recently used pages likely to be used again soon."},
+  {q:"Aging technique in OS scheduling is used to prevent:",opts:["Deadlock","Thrashing","Starvation","Race conditions"],ans:2,d:'medium',m:2,e:"Aging: gradually increase priority of waiting processes to prevent indefinite postponement (starvation)."},
+  {q:"Which deadlock handling strategy is used by most modern OS?",opts:["Prevention","Avoidance (Banker's)","Detection and recovery","Ignore it (Ostrich algorithm)"],ans:3,d:'hard',m:2,e:"Most OS (Windows, Linux) use the ostrich algorithm — assume deadlocks are rare and ignore them. Databases use detection."},
 ],
+
+// ── DBMS ──
 dbms:[
-  {q:"Projection (π) in relational algebra:",opts:["Selects rows","Selects columns","Joins tables","Renames attributes"],ans:1,d:'easy',m:1,e:"Projection π_A(R): keeps only specified columns A from relation R."},
-  {q:"1NF requires:",opts:["No repeating groups, atomic attributes","No partial dependencies","No transitive dependencies","No multivalued dependencies"],ans:0,d:'easy',m:1,e:"First Normal Form: all attributes atomic (no sets/arrays), each row unique."},
-  {q:"GRANT command in SQL is used for:",opts:["Creating tables","Giving privileges to users","Inserting data","Querying data"],ans:1,d:'easy',m:1,e:"GRANT: DCL command to give database privileges to users or roles."},
-  {q:"Which join returns all rows from left table plus matched from right?",opts:["Inner Join","Right Outer Join","Left Outer Join","Full Outer Join"],ans:2,d:'easy',m:1,e:"Left Outer Join: all rows from left table, NULLs where right has no match."},
-  {q:"ACID — Durability means:",opts:["Transaction is atomic","Committed data survives failures","Concurrent isolation","Consistent state maintained"],ans:1,d:'easy',m:1,e:"Durability: once committed, changes are permanent even after system crashes."},
+  {q:"Projection (π) in relational algebra:",opts:["Selects rows based on condition","Selects specific columns","Joins two relations","Renames attributes"],ans:1,d:'easy',m:1,e:"π_A(R): projects (keeps) only specified columns A from relation R."},
+  {q:"1NF requires that all attributes are:",opts:["Atomic (no multi-valued or composite)","Only integers","Unique","Foreign keys"],ans:0,d:'easy',m:1,e:"1NF: each attribute must be atomic — no sets, arrays, or repeating groups."},
+  {q:"GRANT command in SQL belongs to which category?",opts:["DDL","DML","DCL","TCL"],ans:2,d:'easy',m:1,e:"GRANT/REVOKE are DCL (Data Control Language) commands for managing privileges."},
+  {q:"Which join returns all rows from the left table regardless of match?",opts:["Inner Join","Right Outer Join","Left Outer Join","Cross Join"],ans:2,d:'easy',m:1,e:"Left Outer Join: all rows from left table; NULL for unmatched columns from right table."},
+  {q:"Durability in ACID means:",opts:["Transaction executes completely or not at all","Committed data survives system failures","Transactions don't interfere with each other","Database stays consistent"],ans:1,d:'easy',m:1,e:"Durability: once committed, changes are permanent even after crashes. Achieved by write-ahead logging."},
+  {q:"A candidate key is:",opts:["A key that references another table","A minimal superkey","Any attribute in the table","A key with NULL values"],ans:1,d:'easy',m:1,e:"Candidate key: a minimal superkey — no proper subset of it is also a superkey."},
+  {q:"The SQL query 'SELECT * FROM R WHERE A > 5' corresponds to which relational algebra operation?",opts:["Projection","Selection (σ)","Join","Union"],ans:1,d:'easy',m:1,e:"WHERE clause = selection σ_{A>5}(R). SELECT * means no projection. The answer is selection."},
+  {q:"Which concurrency control protocol can cause deadlock?",opts:["Timestamp ordering","Two-Phase Locking (2PL)","MVCC","Optimistic concurrency control"],ans:1,d:'medium',m:2,e:"2PL can cause deadlock when two transactions wait for each other's locks. Timestamp ordering prevents deadlock."},
+  {q:"A B+ tree index stores data records only at:",opts:["Root node","Internal nodes","Leaf nodes","All nodes equally"],ans:2,d:'easy',m:1,e:"B+ tree: data/record pointers at leaf nodes only. Internal nodes store keys for routing."},
+  {q:"What is the result of NATURAL JOIN if no common attributes exist?",opts:["Empty relation","Cross product (Cartesian product)","Error","Same as inner join"],ans:1,d:'medium',m:2,e:"Natural join on relations with no common attributes = Cartesian product (every combination)."},
+  {q:"The 'phantom read' problem in transactions occurs when:",opts:["A row is updated by another transaction","New rows matching a query appear after re-execution","A transaction reads a dirty value","Rows are deleted"],ans:1,d:'hard',m:2,e:"Phantom read: a transaction re-executes a range query and finds new rows inserted by another committed transaction."},
+  {q:"In SQL, GROUP BY is used with aggregate functions like COUNT, SUM. HAVING filters:",opts:["Individual rows","Groups after GROUP BY","Before WHERE","Tables"],ans:1,d:'medium',m:2,e:"HAVING filters groups (after GROUP BY), like WHERE filters individual rows. HAVING can use aggregate functions."},
 ],
+
+// ── COMPUTER NETWORKS ──
 cn:[
-  {q:"Which protocol is connectionless?",opts:["TCP","HTTP","UDP","FTP"],ans:2,d:'easy',m:1,e:"UDP (User Datagram Protocol): connectionless, no handshake, no reliability guarantees."},
-  {q:"MAC address is how many bits?",opts:["32","48","64","128"],ans:1,d:'easy',m:1,e:"MAC address: 48 bits (6 bytes), written as 6 hex pairs XX:XX:XX:XX:XX:XX."},
-  {q:"ICMP is used for:",opts:["File transfer","Error reporting and diagnostics (ping, traceroute)","Email","DNS resolution"],ans:1,d:'easy',m:1,e:"ICMP: Internet Control Message Protocol — error messages and diagnostics (ping uses echo request/reply)."},
-  {q:"Class C IP address range (first octet):",opts:["1−126","128−191","192−223","224−239"],ans:2,d:'medium',m:2,e:"Class C: first octet 192−223. /24 prefix. Up to 254 hosts per network."},
-  {q:"NAT (Network Address Translation) allows:",opts:["Multiple public IPs","Many private IPs to share one public IP","Faster routing","Encryption"],ans:1,d:'easy',m:1,e:"NAT: maps many private (RFC1918) addresses to one or few public IPs. Conserves IPv4 space."},
+  {q:"Which protocol is connectionless and does not guarantee delivery?",opts:["TCP","HTTP","UDP","FTP"],ans:2,d:'easy',m:1,e:"UDP: connectionless, no handshake, no ACK, no reliability. Best for speed (video, DNS, games)."},
+  {q:"MAC address length:",opts:["32 bits","48 bits","64 bits","128 bits"],ans:1,d:'easy',m:1,e:"MAC address: 48 bits = 6 bytes. Written as 6 hex pairs (e.g., AA:BB:CC:DD:EE:FF)."},
+  {q:"ICMP is used for:",opts:["File transfer","Error reporting and network diagnostics","Email delivery","Database queries"],ans:1,d:'easy',m:1,e:"ICMP: Internet Control Message Protocol. Used by ping (echo request/reply), traceroute, error messages."},
+  {q:"Class C IP address first octet range:",opts:["1–126","128–191","192–223","224–239"],ans:2,d:'medium',m:2,e:"Class C: first octet 192–223, default /24 prefix. Up to 254 usable host addresses per network."},
+  {q:"NAT (Network Address Translation) allows:",opts:["Multiple public IPs","Many private IPs share one public IP","Encryption of traffic","Faster routing"],ans:1,d:'easy',m:1,e:"NAT: maps private RFC1918 addresses to one public IP. Conserves IPv4 address space."},
+  {q:"TCP three-way handshake sequence:",opts:["SYN→SYN-ACK→ACK","SYN→ACK→SYN-ACK","ACK→SYN→SYN-ACK","SYN-ACK→SYN→ACK"],ans:0,d:'easy',m:1,e:"TCP connection: Client→Server: SYN, Server→Client: SYN-ACK, Client→Server: ACK. Then data transfer."},
+  {q:"DNS operates at which OSI layer?",opts:["Layer 2 (Data Link)","Layer 3 (Network)","Layer 4 (Transport)","Layer 7 (Application)"],ans:3,d:'easy',m:1,e:"DNS is an application-layer protocol (Layer 7). It uses UDP port 53 (and TCP for zone transfers)."},
+  {q:"Sliding window protocol improves efficiency by:",opts:["Reducing frame size","Allowing multiple frames before waiting for ACK","Increasing timeout","Removing error checking"],ans:1,d:'medium',m:2,e:"Sliding window: sender can transmit window-size frames without waiting for ACK → higher utilization."},
+  {q:"In OSI model, which layer handles end-to-end error recovery and flow control?",opts:["Network","Data Link","Transport","Session"],ans:2,d:'easy',m:1,e:"Transport layer (Layer 4): end-to-end reliability, error recovery, flow control. TCP operates here."},
+  {q:"Distance vector routing uses which algorithm?",opts:["Dijkstra's","Bellman-Ford","Floyd-Warshall","BFS"],ans:1,d:'medium',m:2,e:"Distance vector routing (RIP) uses Bellman-Ford algorithm. Link-state routing (OSPF) uses Dijkstra."},
+  {q:"What does TTL (Time to Live) in an IP packet do?",opts:["Encrypts the packet","Limits packet lifetime/hops to prevent routing loops","Compresses data","Sets QoS priority"],ans:1,d:'easy',m:1,e:"TTL: decremented by each router. When TTL=0, packet is discarded → prevents infinite loops."},
 ],
+
+// ── THEORY OF COMPUTATION ──
 toc:[
-  {q:"Finite Automaton cannot recognize:",opts:["(a|b)*","a*b*","aⁿbⁿ (n≥1)","(ab)*"],ans:2,d:'medium',m:2,e:"FA has no memory — cannot count and match n. aⁿbⁿ requires a stack → CFL, not regular."},
-  {q:"Regular languages are closed under complement. Complement of L(M) is accepted by DFA where:",opts:["All states reversed","Accepting and non-accepting states swapped","Transitions reversed","Start state changed"],ans:1,d:'medium',m:2,e:"Complement: swap accepting ↔ non-accepting states in complete DFA."},
-  {q:"Church-Turing thesis says:",opts:["All problems are computable","Any effectively computable function is computable by TM","TMs are faster than computers","NP=P"],ans:1,d:'medium',m:2,e:"Church-Turing: informal algorithms = Turing machine computation. Not provable, widely accepted."},
-  {q:"Empty language ∅ is:",opts:["Regular","Not regular","Context-sensitive","Recursive"],ans:0,d:'easy',m:1,e:"Empty language ∅ is regular — accepted by DFA with no accepting states."},
-  {q:"Post Correspondence Problem (PCP) is:",opts:["Decidable","Undecidable","NP-complete","In P"],ans:1,d:'hard',m:2,e:"PCP is undecidable — proved by reduction from halting problem. Classic undecidability example."},
+  {q:"Which language CANNOT be recognized by a finite automaton?",opts:["(a|b)*","a*b*","aⁿbⁿ (n≥1)","(ab)*"],ans:2,d:'medium',m:2,e:"aⁿbⁿ requires counting equal a's and b's — needs a stack (PDA), not possible with finite memory (DFA)."},
+  {q:"Complement of a regular language is:",opts:["Always regular","Always context-free","Undecidable","Not always regular"],ans:0,d:'medium',m:2,e:"Regular languages are closed under complement. Swap accepting/non-accepting states in the complete DFA."},
+  {q:"Church-Turing thesis states:",opts:["All problems are computable","Any effectively computable function equals a Turing machine computation","Turing machines are the fastest computers","NP = P"],ans:1,d:'medium',m:2,e:"Church-Turing: informal notion of algorithm = Turing machine. Not mathematically provable, widely accepted."},
+  {q:"The empty language ∅ is:",opts:["Regular","Not regular","Context-sensitive only","Undecidable"],ans:0,d:'easy',m:1,e:"∅ is regular: a DFA with no accepting states accepts ∅. All finite languages are regular."},
+  {q:"Post Correspondence Problem (PCP) is:",opts:["Decidable for all instances","Undecidable","NP-complete","In P"],ans:1,d:'hard',m:2,e:"PCP is undecidable. Classic example used in reductions to prove other problems undecidable."},
+  {q:"The intersection of two CFLs is:",opts:["Always a CFL","Always regular","Not necessarily a CFL","Always empty"],ans:2,d:'hard',m:2,e:"CFLs are NOT closed under intersection. Example: {aⁿbⁿcⁿ} is the intersection of two CFLs but is not CFL."},
+  {q:"An NFA with n states can be converted to an equivalent DFA with at most:",opts:["n states","n+1 states","2^n states","n² states"],ans:2,d:'medium',m:2,e:"Subset construction: each DFA state = subset of NFA states. At most 2^n subsets → 2^n DFA states."},
+  {q:"Context-sensitive languages are accepted by:",opts:["DFA","PDA","Linear bounded automaton (LBA)","Turing machine only"],ans:2,d:'medium',m:2,e:"LBA (Turing machine restricted to input tape length) accepts exactly context-sensitive languages."},
+  {q:"Which is more powerful: NFA or DFA?",opts:["NFA is more powerful","DFA is more powerful","They are equally powerful","Depends on the language"],ans:2,d:'easy',m:1,e:"NFA and DFA are equivalent in power — both accept exactly the class of regular languages."},
 ],
+
+// ── COMPUTER ORGANIZATION ──
 co:[
-  {q:"Register indirect addressing: operand is at address stored in:",opts:["Instruction itself","Program counter","Register","Memory location"],ans:2,d:'easy',m:1,e:"Register indirect: instruction specifies a register; its contents = address of operand."},
-  {q:"Interrupt latency is minimized by:",opts:["Large cache","Short ISR, fast context save","More registers","Pipelining"],ans:1,d:'medium',m:2,e:"Interrupt latency: time from interrupt to ISR start. Minimized by fast context save and short critical sections."},
-  {q:"Set-associative cache with set size k: each set has k lines. Search within set is:",opts:["O(k) comparators","O(log k)","O(1) parallel","O(k²)"],ans:2,d:'hard',m:2,e:"k-way: k comparators work in parallel → O(1) lookup time regardless of k.",},
-  {q:"Von Neumann bottleneck refers to:",opts:["Slow ALU","Limited bandwidth between CPU and memory","No cache","Slow I/O"],ans:1,d:'medium',m:2,e:"Von Neumann bottleneck: single bus between CPU and memory limits throughput."},
+  {q:"Register indirect addressing: operand is at address stored in:",opts:["The instruction itself","Program counter","A register","A fixed memory location"],ans:2,d:'easy',m:1,e:"Register indirect: instruction gives register; that register's value = address of the actual operand."},
+  {q:"Interrupt latency is minimized by:",opts:["Larger cache","Short ISR and fast context save","More registers","Pipeline depth"],ans:1,d:'medium',m:2,e:"Interrupt latency = time from interrupt signal to first ISR instruction. Reduce by fast context save and short critical sections."},
+  {q:"k-way set-associative cache: lookup time is:",opts:["O(k) sequential","O(log k)","O(1) parallel (k comparators)","O(k²)"],ans:2,d:'hard',m:2,e:"k comparators work in parallel to check all k tags simultaneously → O(1) lookup."},
+  {q:"Von Neumann bottleneck refers to:",opts:["Slow ALU operations","Single shared bus between CPU and memory limiting throughput","Cache too small","Slow clock speed"],ans:1,d:'medium',m:2,e:"The CPU-memory bus is shared for instructions and data — limits throughput. Harvard architecture separates them."},
+  {q:"In a 2's complement 8-bit system, the range of representable integers is:",opts:["-127 to 127","-128 to 127","-128 to 128","0 to 255"],ans:1,d:'medium',m:2,e:"8-bit 2's complement: −2^7 = −128 to 2^7−1 = 127. There's one extra negative number."},
+  {q:"Which pipeline hazard is resolved by forwarding (data bypassing)?",opts:["Control hazard","Structural hazard","Data hazard (RAW)","All hazards"],ans:2,d:'medium',m:2,e:"Forwarding routes result from EX/MEM stage directly to the ALU input — resolves RAW data hazards without stalling."},
+  {q:"Write-back vs write-through cache: write-back is better because:",opts:["Simpler implementation","Less main memory bandwidth used","No dirty bits needed","More coherence"],ans:1,d:'medium',m:2,e:"Write-back: only writes to memory when block is evicted → fewer memory writes → less bandwidth consumed."},
+  {q:"The number of bits required to address 1KB of memory:",opts:["8","10","12","16"],ans:1,d:'easy',m:1,e:"1KB = 1024 bytes = 2^10 bytes → need 10 address bits."},
 ],
-signals:[
-  {q:"System y(t) = x(2t) is:",opts:["Causal and linear","Non-causal and linear","Causal and nonlinear","Time-invariant"],ans:1,d:'medium',m:2,e:"y(t)=x(2t): time-scaling needs future values for t<0 → non-causal. Linear (satisfies superposition)."},
-  {q:"Impulse response of ideal lowpass filter is:",opts:["Impulse","Step function","Sinc function","Exponential"],ans:2,d:'medium',m:2,e:"Ideal LPF: H(jω) = rect → h(t) = sinc (IFT of rectangle is sinc). Non-causal."},
-  {q:"Energy of signal x(t) = e^(-t)u(t):",opts:["0.5","1","2","∞"],ans:0,d:'medium',m:2,e:"E = ∫₀^∞ e^(-2t)dt = [-e^(-2t)/2]₀^∞ = 0 − (−1/2) = 0.5."},
-],
-edc:[
-  {q:"In n-type semiconductor, majority carriers are:",opts:["Holes","Electrons","Both equally","Ionized donors"],ans:1,d:'easy',m:1,e:"n-type: doped with donors → excess electrons → majority carriers are electrons."},
-  {q:"Forward biased pn-junction: depletion width:",opts:["Increases","Decreases","Stays same","Becomes infinite"],ans:1,d:'easy',m:1,e:"Forward bias: forward voltage opposes built-in potential → depletion region narrows."},
-  {q:"Transconductance gm of MOSFET in saturation:",opts:["Constant","μCox(W/L)(VGS−Vth)","VGS/ID","1/RDS"],ans:1,d:'medium',m:2,e:"gm = ∂ID/∂VGS = μCox(W/L)(VGS−Vth) — controls gain in MOSFET amplifiers."},
-],
-control:[
-  {q:"Transfer function of integrator (1/s) has:",opts:["A zero at origin","A pole at origin","Two poles","A zero at infinity"],ans:1,d:'easy',m:1,e:"G(s)=1/s: denominator s → pole at s=0 (origin).",y:2022,sub:'Control Systems',top:'Transfer Functions',st:'ece'},
-  {q:"System with open loop TF G(s)H(s): gain margin is measured at:",opts:["Gain crossover frequency","Phase crossover frequency","0 dB","−90°"],ans:1,d:'medium',m:2,e:"Gain margin: measured at phase crossover frequency (where phase = −180°)."},
-  {q:"A system is type-1 if it has one pole at:",opts:["s=−1","s=0","s=1","s=∞"],ans:1,d:'medium',m:2,e:"System type = number of open-loop poles at origin (s=0). Type-1 has exactly 1 pole at origin."},
-],
-thermo:[
-  {q:"First law of thermodynamics for closed system: dU =",opts:["δQ − δW","δQ + δW","δW − δQ","T·dS"],ans:0,d:'easy',m:1,e:"First law: change in internal energy = heat added − work done by system. dU = δQ − δW."},
-  {q:"Clausius inequality: ∮(δQ/T) ≤",opts:["0","1","∞","U"],ans:0,d:'medium',m:2,e:"Clausius: ∮(δQ/T) ≤ 0. Equality holds for reversible cycle, < 0 for irreversible."},
-  {q:"Compressibility factor Z=PV/nRT for real gas. Z<1 means:",opts:["Ideal behavior","Attractive forces dominate","Repulsive forces dominate","Temperature too high"],ans:1,d:'hard',m:2,e:"Z<1: gas occupies less volume than ideal → attractive intermolecular forces dominant."},
-],
-quant:[
-  {q:"What percent of 80 is 20?",opts:["20%","25%","30%","16%"],ans:1,d:'easy',m:1,e:"20/80 × 100 = 25%."},
-  {q:"Compound interest on ₹1000 at 10% for 2 years (annual):",opts:["₹200","₹210","₹220","₹205"],ans:1,d:'medium',m:2,e:"A = 1000(1.1)² = 1000×1.21 = 1210. CI = 1210−1000 = ₹210."},
-  {q:"In a triangle with angles 30°, 60°, 90°, the hypotenuse is twice the shortest side. If shortest side = 5:",opts:["10","8","12","15"],ans:0,d:'easy',m:1,e:"Hypotenuse = 2 × shortest = 2 × 5 = 10."},
-],
-lr:[
-  {q:"Odd one out: 11, 13, 17, 19, 21, 23",opts:["11","19","21","23"],ans:2,d:'easy',m:1,e:"21 = 3×7 is composite. All others are prime."},
-  {q:"If MOUSE = 13+15+21+19+5 = 73, what is DOG?",opts:["26","27","28","29"],ans:2,d:'easy',m:1,e:"D=4, O=15, G=7. Sum = 4+15+7 = 26. Wait: 4+15+7=26. Correct answer: 26.",},
-  {q:"All doctors are rich. No poor person is happy. Therefore:",opts:["All rich are doctors","Some doctors may be happy","All doctors are happy","No doctor is poor"],ans:3,d:'medium',m:2,e:"All doctors are rich → no doctor is poor. (Not all doctors happy — need more premises.)"},
-],
+
+// ── DISCRETE MATHEMATICS ──
 dm:[
-  {q:"Number of simple graphs with 4 vertices (no self loops):",opts:["2^6=64","2^4=16","C(4,2)=6","4!=24"],ans:0,d:'hard',m:2,e:"Each of C(4,2)=6 possible edges present or absent → 2^6 = 64 simple graphs."},
-  {q:"Boolean algebra: A + A·B = ?",opts:["A·B","A","B","A+B"],ans:1,d:'easy',m:1,e:"Absorption law: A + A·B = A. (A is already included.)"},
-  {q:"Number of relations on a set of n elements:",opts:["n²","2^(n²)","n!","2^n"],ans:1,d:'medium',m:2,e:"Relation = subset of A×A (n² pairs). Each can be included or not → 2^(n²) relations."},
+  {q:"Number of simple graphs with 4 vertices:",opts:["2^6 = 64","2^4 = 16","C(4,2) = 6","4! = 24"],ans:0,d:'hard',m:2,e:"Each of C(4,2)=6 possible edges can be present or absent → 2^6 = 64 distinct simple graphs."},
+  {q:"Boolean algebra absorption law: A + A·B = ?",opts:["A·B","A","B","A + B"],ans:1,d:'easy',m:1,e:"Absorption: A + A·B = A(1 + B) = A·1 = A."},
+  {q:"Number of binary relations on a set of n elements:",opts:["n²","2^(n²)","n!","2^n"],ans:1,d:'medium',m:2,e:"A×A has n² pairs. Each pair either is or isn't in the relation → 2^(n²) relations."},
+  {q:"Principle of mathematical induction proves statements for:",opts:["Real numbers","All positive integers","Finite sets only","Rational numbers only"],ans:1,d:'easy',m:1,e:"Mathematical induction: prove for n=1 (base), assume for n=k, prove for n=k+1 → true for all positive integers."},
+  {q:"Euler's formula for connected planar graphs: V − E + F = ?",opts:["0","1","2","3"],ans:2,d:'medium',m:2,e:"Euler's formula: V − E + F = 2, where V = vertices, E = edges, F = faces (including outer face)."},
+  {q:"Number of permutations of the word 'LEVEL':",opts:["120","60","30","20"],ans:1,d:'medium',m:2,e:"LEVEL: 5 letters, L repeats 2 times, E repeats 2 times. 5!/(2!×2!) = 120/4 = 30. Wait: L=2,E=2,V=1 → 5!/2!2! = 30.",},
+  {q:"A relation is an equivalence relation if it is:",opts:["Reflexive and symmetric","Reflexive, symmetric, and transitive","Reflexive and transitive","Symmetric and transitive only"],ans:1,d:'easy',m:1,e:"Equivalence relation: reflexive (aRa), symmetric (aRb→bRa), transitive (aRb∧bRc→aRc)."},
+  {q:"Pigeonhole principle: if n+1 objects are placed in n boxes, at least one box has:",opts:["Exactly 2 objects","At least 2 objects","At most 2 objects","Exactly n objects"],ans:1,d:'easy',m:1,e:"Pigeonhole: n+1 objects in n boxes → at least one box has ≥ 2 objects."},
 ],
+
+// ── COMPILER DESIGN ──
+compiler:[
+  {q:"Which phase converts source code into tokens?",opts:["Syntax analysis","Lexical analysis","Semantic analysis","Code generation"],ans:1,d:'easy',m:1,e:"Lexical analysis (scanner): reads characters, produces tokens (keywords, identifiers, literals)."},
+  {q:"An LL(1) parser is a:",opts:["Bottom-up parser","Top-down parser","Both","Shift-reduce parser"],ans:1,d:'easy',m:1,e:"LL(1): Left-to-right input, Leftmost derivation, 1 token lookahead. It's a top-down parser."},
+  {q:"Which attribute is computed bottom-up (from children to parent) in a parse tree?",opts:["Inherited attribute","Synthesized attribute","Both","Neither"],ans:1,d:'medium',m:2,e:"Synthesized attributes flow bottom-up. Inherited attributes flow top-down (from parent/sibling to child)."},
+  {q:"FIRST(A) for grammar symbol A contains:",opts:["All terminals that can follow A","All terminals that can start strings derived from A","All non-terminals in A","ε if A is nullable"],ans:1,d:'medium',m:2,e:"FIRST(A) = {t : A →* tβ for some β}. Include ε if A can derive the empty string."},
+  {q:"Three-address code is an example of:",opts:["Machine code","Intermediate representation","Assembly code","High-level code"],ans:1,d:'easy',m:1,e:"Three-address code (x = y op z) is an intermediate representation — machine independent, easy to optimize."},
+  {q:"Register allocation is performed during which compiler phase?",opts:["Lexical analysis","Parsing","Semantic analysis","Code generation/optimization"],ans:3,d:'medium',m:2,e:"Register allocation is part of the code generation/optimization backend — assigns variables to physical registers."},
+  {q:"An LR parser is more powerful than an LL parser because:",opts:["It's faster","It can handle more grammars (left recursion, etc.)","It uses less memory","It detects errors faster"],ans:1,d:'medium',m:2,e:"LR(k) parsers handle a larger class of grammars than LL(k). LR can handle left-recursive grammars."},
+  {q:"Dead code elimination removes code that:",opts:["Runs slowly","Can never be executed","Has syntax errors","Uses too many variables"],ans:1,d:'easy',m:1,e:"Dead code: code that can never be reached or whose result is never used. Removing it reduces code size."},
+],
+
+// ── SOFTWARE ENGINEERING ──
+se:[
+  {q:"Cyclomatic complexity V(G) = E − N + 2P. For a single function (P=1) with 10 edges and 8 nodes:",opts:["4","3","5","2"],ans:0,d:'medium',m:2,e:"V(G) = 10 − 8 + 2×1 = 4. Cyclomatic complexity = number of linearly independent paths."},
+  {q:"Agile methodology is best suited for projects with:",opts:["Stable, well-defined requirements","Frequently changing requirements","Very large teams","Safety-critical systems"],ans:1,d:'easy',m:1,e:"Agile: iterative development, embraces change. Best when requirements evolve. Waterfall suits stable requirements."},
+  {q:"Black-box testing tests:",opts:["Internal code structure","Functionality based on specifications only","Both code and specs","Database queries"],ans:1,d:'easy',m:1,e:"Black-box: tester has no knowledge of internals. Tests input→output behavior based on requirements."},
+  {q:"COCOMO model estimates:",opts:["Test coverage","Software development effort and cost","Code quality","Security vulnerabilities"],ans:1,d:'easy',m:1,e:"COCOMO (Constructive Cost Model): estimates effort (person-months), duration, and cost from KLOC."},
+  {q:"Which testing strategy tests individual modules in isolation?",opts:["Integration testing","System testing","Unit testing","Acceptance testing"],ans:2,d:'easy',m:1,e:"Unit testing: individual functions/modules tested in isolation, often with mock dependencies."},
+  {q:"The Spiral model combines:",opts:["Waterfall and Agile","Waterfall and risk analysis/prototyping","Only prototyping","Only waterfall phases"],ans:1,d:'medium',m:2,e:"Spiral model: waterfall phases + risk analysis at each iteration. Good for large, risk-heavy projects."},
+],
+
+// ── PROGRAMMING (C/C++) ──
+prog:[
+  {q:"In C, sizeof(int) is guaranteed to be at least:",opts:["1 byte","2 bytes","4 bytes","8 bytes"],ans:1,d:'medium',m:2,e:"C standard guarantees sizeof(int) ≥ sizeof(short) ≥ 2 bytes. Actual size is implementation-defined."},
+  {q:"What does 'static' mean for a local variable in C?",opts:["It's const","It persists between function calls","It's global","It's register-allocated"],ans:1,d:'medium',m:2,e:"Static local: stored in BSS/data segment, retains value between function calls. Initialized once."},
+  {q:"In C, passing an array to a function passes:",opts:["A copy of the entire array","A pointer to the first element","The size of the array","A reference (like C++)"],ans:1,d:'easy',m:1,e:"Array name decays to pointer to first element. sizeof won't give array size inside function."},
+  {q:"int *p = (int*)malloc(sizeof(int)*5). p[3] is equivalent to:",opts:["*(p+3)","*(p+4)","p+3","&p[3]"],ans:0,d:'easy',m:1,e:"Array indexing: p[i] ≡ *(p+i). So p[3] = *(p+3)."},
+  {q:"Which of the following is a dangling pointer?",opts:["NULL pointer","Pointer to freed memory","Uninitialized pointer","Pointer to global variable"],ans:1,d:'medium',m:2,e:"Dangling pointer: points to memory that has been freed (via free()). Using it is undefined behavior."},
+  {q:"Output of: int x=5; printf('%d', x++ + ++x); (conceptually)",opts:["10","11","12","Undefined behavior"],ans:3,d:'hard',m:2,e:"Modifying x twice between sequence points is undefined behavior in C. Compiler can produce anything."},
+],
+
+// ── DIGITAL LOGIC ──
+dl:[
+  {q:"Two's complement of 0 in 8-bit representation:",opts:["00000000","11111111","10000000","00000001"],ans:0,d:'easy',m:1,e:"0 in two's complement is 00000000. Flipping gives 11111111, adding 1 gives 100000000 → overflow to 00000000."},
+  {q:"Minimum number of NAND gates to implement NOT gate:",opts:["1","2","3","4"],ans:0,d:'easy',m:1,e:"NOT A = A NAND A. Connect both inputs of a NAND gate together → single NAND implements NOT."},
+  {q:"A flip-flop is a:",opts:["Combinational circuit","Sequential circuit","Encoder","Multiplexer"],ans:1,d:'easy',m:1,e:"Flip-flop: bistable sequential circuit with memory (stores 1 bit). Output depends on input AND current state."},
+  {q:"XOR of a number with itself:",opts:["The number itself","Complement of the number","0","All 1s (0xFF for 8-bit)"],ans:2,d:'easy',m:1,e:"A XOR A = 0. Every bit: 0⊕0=0, 1⊕1=0. Used to clear registers efficiently."},
+  {q:"K-map (Karnaugh map) is used to:",opts:["Design sequential circuits","Minimize Boolean expressions","Convert binary to gray code","Implement flip-flops"],ans:1,d:'easy',m:1,e:"K-map: graphical method to minimize Boolean expressions by grouping adjacent 1s (minterms)."},
+  {q:"A 3-to-8 decoder has how many inputs and outputs?",opts:["3 inputs, 8 outputs","8 inputs, 3 outputs","4 inputs, 8 outputs","3 inputs, 6 outputs"],ans:0,d:'easy',m:1,e:"n-to-2^n decoder: 3 inputs, 2^3 = 8 outputs. Exactly one output is high for each input combination."},
+  {q:"Gray code is preferred over binary in analog-to-digital converters because:",opts:["It uses fewer bits","Adjacent values differ by only 1 bit — reduces errors","It's easier to compute","It has higher range"],ans:1,d:'medium',m:2,e:"Gray code: consecutive values differ by exactly 1 bit. Reduces errors in ADCs when transitioning between states."},
+],
+
+// ── SIGNALS & SYSTEMS ──
+signals:[
+  {q:"System y(t) = x(2t) is:",opts:["Causal and linear","Non-causal and linear","Causal and nonlinear","Time-invariant and causal"],ans:1,d:'medium',m:2,e:"y(t)=x(2t): time-scaling needs future values for t<0 → non-causal. Satisfies superposition → linear."},
+  {q:"Impulse response of an ideal low-pass filter is:",opts:["An impulse","A step function","A sinc function","An exponential"],ans:2,d:'medium',m:2,e:"Ideal LPF: H(jω)=rect in frequency domain → h(t)=sinc in time (IFT of rectangle = sinc). Non-causal."},
+  {q:"Energy of signal x(t) = e^(−t)u(t):",opts:["0.5","1","2","∞"],ans:0,d:'medium',m:2,e:"E = ∫₀^∞ |e^(−t)|² dt = ∫₀^∞ e^(−2t) dt = [−e^(−2t)/2]₀^∞ = 1/2 = 0.5."},
+  {q:"Fourier transform of a constant (DC signal) A is:",opts:["A·δ(ω)","2πA·δ(ω)","A/jω","1/A"],ans:1,d:'hard',m:2,e:"F{A} = 2πA·δ(ω). The DC component maps to an impulse at ω=0 scaled by 2π."},
+  {q:"A causal system's impulse response h(t) satisfies:",opts:["h(t) = 0 for all t","h(t) = 0 for t < 0","h(t) = 0 for t > 0","h(t) ≥ 0 always"],ans:1,d:'easy',m:1,e:"Causal system: output depends only on present and past inputs → h(t) = 0 for t < 0."},
+],
+
+// ── ELECTRONIC DEVICES ──
+edc:[
+  {q:"In n-type semiconductor, majority carriers are:",opts:["Holes","Electrons","Both equally","Ionized donors"],ans:1,d:'easy',m:1,e:"n-type doped with donors (pentavalent) → excess free electrons → majority carriers = electrons."},
+  {q:"Forward biased pn-junction: depletion region width:",opts:["Increases","Decreases","Stays constant","Becomes infinite"],ans:1,d:'easy',m:1,e:"Forward bias reduces built-in potential → depletion region narrows → more current flows."},
+  {q:"Transconductance gm of MOSFET in saturation region:",opts:["Constant, independent of VGS","μCox(W/L)(VGS−Vth)","VGS/ID","1/RDS(on)"],ans:1,d:'medium',m:2,e:"gm = ∂ID/∂VGS = μnCox(W/L)(VGS−Vth). Controls voltage-to-current conversion in amplifiers."},
+  {q:"The Early effect in BJTs refers to:",opts:["Reverse breakdown","Base width modulation by collector voltage","Junction capacitance","Leakage current"],ans:1,d:'medium',m:2,e:"Early effect: collector voltage modulates effective base width → affects IC even in active region."},
+  {q:"In CMOS logic, static power consumption is approximately:",opts:["High when switching","Zero when not switching","Proportional to frequency","Constant"],ans:1,d:'easy',m:1,e:"CMOS: one transistor always OFF → no DC path → near-zero static power. Dynamic power ∝ f×C×V²."},
+],
+
+// ── CONTROL SYSTEMS ──
+control:[
+  {q:"Transfer function of an integrator 1/s has:",opts:["A zero at origin","A pole at origin","Two poles at origin","A zero at infinity"],ans:1,d:'easy',m:1,e:"G(s)=1/s: denominator = s → single pole at s=0 (origin)."},
+  {q:"System is stable if all poles are in:",opts:["Right half of s-plane","Left half of s-plane","On the imaginary axis","Origin only"],ans:1,d:'easy',m:1,e:"BIBO stability: all poles must have negative real parts (left half s-plane)."},
+  {q:"Gain margin is the factor by which gain can be increased before instability. It is measured at:",opts:["Gain crossover frequency","Phase crossover frequency (phase = −180°)","ω = 0","ω → ∞"],ans:1,d:'medium',m:2,e:"Gain margin: at phase crossover frequency (where open-loop phase = −180°), GM = 1/|G(jω)H(jω)|."},
+  {q:"A PID controller adds:",opts:["Only proportional action","Integral action to eliminate steady-state error","Derivative to predict future error","All: proportional, integral, and derivative"],ans:3,d:'easy',m:1,e:"PID: P reduces error magnitude, I eliminates steady-state error, D adds prediction/damping."},
+],
+
+// ── THERMODYNAMICS (ME) ──
+thermo:[
+  {q:"First law of thermodynamics for a closed system: ΔU =",opts:["Q − W","Q + W","W − Q","T·ΔS"],ans:0,d:'easy',m:1,e:"First law: ΔU = Q − W (heat added minus work done by system). Energy conservation."},
+  {q:"Clausius inequality states ∮(δQ/T) ≤ 0. Equality holds for:",opts:["Irreversible cycle","Reversible cycle","Adiabatic cycle","Isothermal cycle"],ans:1,d:'medium',m:2,e:"Clausius: = 0 for reversible, < 0 for irreversible. Equality ↔ reversible (ideal) cycle."},
+  {q:"Carnot efficiency depends only on:",opts:["Working fluid properties","Heat source and sink temperatures","Pressure ratio","Compression ratio"],ans:1,d:'easy',m:1,e:"Carnot efficiency η = 1 − T_cold/T_hot. Depends only on absolute temperatures, not the working fluid."},
+  {q:"Compressibility factor Z < 1 for a real gas means:",opts:["Ideal gas behavior","Repulsive forces dominate","Attractive forces dominate (gas more compressible)","Temperature is very high"],ans:2,d:'hard',m:2,e:"Z = PV/nRT < 1 → gas occupies less volume than ideal → attractive forces pulling molecules together."},
+  {q:"In Otto cycle (spark ignition engine), heat addition is at:",opts:["Constant pressure","Constant volume","Constant temperature","Constant entropy"],ans:1,d:'easy',m:1,e:"Otto cycle: heat addition at constant volume (isochoric process) — approximates SI engine."},
+],
+
+// ── GA: QUANTITATIVE ──
+quant:[
+  {q:"What percent of 80 is 20?",opts:["20%","25%","30%","16%"],ans:1,d:'easy',m:1,e:"(20/80)×100 = 25%."},
+  {q:"Compound interest on ₹1000 at 10% p.a. for 2 years:",opts:["₹200","₹210","₹220","₹205"],ans:1,d:'medium',m:2,e:"A = 1000×(1.1)² = 1210. CI = 1210−1000 = ₹210."},
+  {q:"30-60-90 triangle: if shortest side = 5, hypotenuse =",opts:["10","8","12","5√3"],ans:0,d:'easy',m:1,e:"Hypotenuse = 2 × shortest side = 2×5 = 10."},
+  {q:"If 6 men do a work in 12 days, 12 men do it in:",opts:["24 days","6 days","8 days","4 days"],ans:1,d:'easy',m:1,e:"Man-days = 6×12 = 72. With 12 men: 72/12 = 6 days."},
+  {q:"Average of 5 consecutive even numbers is 30. Largest is:",opts:["30","32","34","36"],ans:2,d:'medium',m:2,e:"Let numbers be n, n+2, n+4, n+6, n+8. Mean = n+4 = 30 → n=26. Largest = 26+8 = 34."},
+  {q:"A train travels 60 km in 45 minutes. Its speed in km/h:",opts:["60","75","80","90"],ans:2,d:'easy',m:1,e:"Speed = 60/(45/60) = 60×(60/45) = 60×(4/3) = 80 km/h."},
+  {q:"X is 20% more than Y. Y is what percent less than X?",opts:["20%","16.67%","25%","18%"],ans:1,d:'medium',m:2,e:"If Y=100, X=120. Y is less than X by 20/120×100 = 16.67%."},
+],
+
+// ── GA: LOGICAL REASONING ──
+lr:[
+  {q:"Odd one out: 11, 13, 17, 19, 21, 23",opts:["11","19","21","23"],ans:2,d:'easy',m:1,e:"21 = 3×7, composite. All others (11,13,17,19,23) are prime numbers."},
+  {q:"All doctors are rich. No poor person is happy. Conclusion:",opts:["All rich are doctors","All doctors are happy","No doctor is poor","Some rich are happy"],ans:2,d:'medium',m:2,e:"All doctors → rich. No poor → happy (contrapositive: unhappy → poor OR happy). No doctor is poor follows directly."},
+  {q:"If A>B, B>C, C>D, then:",opts:["D>A","A>D","A=D","Cannot determine"],ans:1,d:'easy',m:1,e:"Transitive: A>B>C>D → A>D."},
+  {q:"Pointing to a man, a woman says 'His mother is the only daughter of my mother.' How is the man related to the woman?",opts:["Son","Grandson","Brother","Nephew"],ans:0,d:'medium',m:2,e:"'Only daughter of my mother' = the woman herself. So the man's mother is the woman → man is her son."},
+  {q:"A clock shows 3:15. Angle between hour and minute hands:",opts:["0°","7.5°","15°","22.5°"],ans:1,d:'medium',m:2,e:"At 3:15: minute hand at 90°. Hour hand at 90°+15×0.5 = 90°+7.5 = 97.5°. Angle = 97.5−90 = 7.5°."},
+  {q:"Series: 2, 6, 12, 20, 30, __",opts:["40","42","44","46"],ans:1,d:'easy',m:1,e:"Differences: 4,6,8,10,12. Next term = 30+12 = 42."},
+],
+
+// ── GA: VERBAL ──
+verbal:[
+  {q:"Choose the word most opposite in meaning to BENEVOLENT:",opts:["Kind","Malevolent","Generous","Charitable"],ans:1,d:'easy',m:1,e:"Benevolent = well-meaning and kindly. Antonym = malevolent (wishing evil/harm)."},
+  {q:"Synonym of EPHEMERAL:",opts:["Permanent","Eternal","Transient","Robust"],ans:2,d:'medium',m:2,e:"Ephemeral = lasting for a very short time. Synonym = transient, fleeting, momentary."},
+  {q:"Fill in: 'The committee __ its decision yesterday.'",opts:["announce","announced","announces","announcing"],ans:1,d:'easy',m:1,e:"Past tense is required: 'announced'. Subject (committee) is singular but context is past action."},
+  {q:"Identify the correct sentence:",opts:["He don't know the answer","He doesn't knows the answer","He doesn't know the answer","He not know the answer"],ans:2,d:'easy',m:1,e:"Third-person singular present: 'doesn't know'. 'Don't' is for I/you/we/they. 'Knows' with 'doesn't' is wrong."},
+  {q:"One word substitute for 'A person who pretends to have virtues or qualities they don't possess':",opts:["Cynic","Hypocrite","Stoic","Egoist"],ans:1,d:'easy',m:1,e:"Hypocrite: person who pretends to have moral standards or beliefs they don't actually have."},
+],
+
+// ── ANALOG/DIGITAL CIRCUITS ──
+ade:[
+  {q:"A common emitter amplifier has phase shift of:",opts:["0°","90°","180°","270°"],ans:2,d:'easy',m:1,e:"Common emitter: 180° phase inversion between input (base) and output (collector)."},
+  {q:"Op-amp ideal characteristics include:",opts:["Zero gain","Infinite input impedance and zero output impedance","Finite bandwidth","Non-zero offset voltage"],ans:1,d:'easy',m:1,e:"Ideal op-amp: infinite open-loop gain, infinite input impedance, zero output impedance, infinite bandwidth."},
+  {q:"A full-wave rectifier output frequency is:",opts:["Same as input","Half the input","Double the input","Four times input"],ans:2,d:'easy',m:1,e:"Full-wave rectifier: both half-cycles produce positive output → output frequency = 2 × input frequency."},
+  {q:"In a BJT, β (current gain hFE) is defined as:",opts:["IC/IB","IB/IC","IE/IB","IC/IE"],ans:0,d:'easy',m:1,e:"β = hFE = IC/IB. Common-emitter current gain. Typically 50–500 for small-signal BJTs."},
+  {q:"RC low-pass filter cut-off frequency:",opts:["f = 1/(2πRC)","f = 2πRC","f = RC","f = R/(2πC)"],ans:0,d:'medium',m:2,e:"RC LPF: fc = 1/(2πRC). At this frequency, output is 0.707 (−3dB) of input."},
+],
+
 };
-// Fill missing subjects with generic
-['verbal','compiler','se','ade','emf','comm','fm','som','mfg','tom','ht','struct','geotech','concrete','enveng','surveying','prog'].forEach(id=>{
-  if(!QB[id]) QB[id]=Array.from({length:5},(_,i)=>({q:`${id.toUpperCase()} — Practice Q${i+1}`,opts:["A","B","C","D"],ans:0,d:'medium',m:1,e:"Study core concepts."}));
+
+// Fill missing subjects with placeholder questions
+['verbal_ph','emf','comm','fm','som','mfg','tom','ht','struct','geotech','concrete','enveng','surveying'].forEach(id=>{
+  if(!QB[id]) QB[id]=Array.from({length:5},(_,i)=>({q:`${id.toUpperCase()} — Practice Q${i+1}: Coming soon`,opts:["Option A","Option B","Option C","Option D"],ans:0,d:'medium',m:1,e:"More questions being added for this subject."}));
 });
+
