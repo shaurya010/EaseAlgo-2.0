@@ -259,15 +259,19 @@ function renderJobsGrid(jobs) {
 }
 
 function applyJob(link) {
-  if (link && (link.startsWith('http') || link.startsWith('mailto'))) {
-    window.open(link, '_blank');
-  }
+  requireLogin(() => {
+    if (link && (link.startsWith('http') || link.startsWith('mailto'))) {
+      window.open(link, '_blank');
+    }
+  }, 'Apply for jobs &amp; opportunities');
 }
 
 // ── Modal ──
 function openJobSubmit() {
-  const m = document.getElementById('job-modal');
-  if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+  requireLogin(() => {
+    const m = document.getElementById('job-modal');
+    if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+  }, 'Post a job opportunity');
 }
 function closeJobSubmit() {
   const m = document.getElementById('job-modal');
