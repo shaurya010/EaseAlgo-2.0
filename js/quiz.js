@@ -158,7 +158,7 @@ function showResult(){
   const t=QS.qs.length;
   const pct=Math.round((QS.correct/t)*100);
   totalScore+=Math.round(QS.marks);
-  document.getElementById('score-v').textContent=totalScore;
+  const sv=document.getElementById('score-v');if(sv)sv.textContent=totalScore;
   document.getElementById('r-pct').textContent=pct+'%';
   document.getElementById('rb-c').textContent=QS.correct;
   document.getElementById('rb-w').textContent=QS.wrong;
@@ -171,6 +171,20 @@ function showResult(){
   ring.style.stroke=grades[2];
   ring.style.strokeDashoffset=264*(1-pct/100);
   document.getElementById('result-ov').classList.add('on');
+
+  // Track result for logged-in user
+  if (window.EA_AUTH && EA_AUTH.isLoggedIn()) {
+    const subjectMap = {};
+    QS.qs.forEach((q,i) => {
+      const sub = q.sub || 'General';
+      if (!subjectMap[sub]) subjectMap[sub] = {sub, correct:0, total:0};
+      subjectMap[sub].total++;
+      if (QS.status[i] === 'c') subjectMap[sub].correct++;
+    });
+    const isMock = document.getElementById('quiz-title')?.textContent?.includes('Full Mock');
+    const yearMatch = document.getElementById('quiz-title')?.textContent?.match(/\d{4}/);
+    EA_AUTH.trackResult(QS.correct, t, Object.values(subjectMap), isMock, yearMatch?parseInt(yearMatch[0]):null);
+  }
 }
 
 function retryQuiz(){
@@ -183,7 +197,11 @@ function retryQuiz(){
 
 function closeResult(){
   document.getElementById('result-ov').classList.remove('on');
-  goto(quizReturn);
+  if (typeof _restoreReturnState === 'function') {
+    _restoreReturnState(quizReturn, quizReturnState);
+  } else {
+    goto(quizReturn);
+  }
 }
 
 function nlSub(){
@@ -191,7 +209,4 @@ function nlSub(){
   if(v&&v.value){v.value='';v.placeholder='✓ Subscribed! Thank you.';}
 }
 
-// ══════ INIT ══════
-// ══ INIT ══
-showGateSection('pyq');
-initPYQ();
+// ══ INIT — called after DOM ready via state.js DOMContentLoaded ══
