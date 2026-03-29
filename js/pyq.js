@@ -225,28 +225,39 @@ const SUBJ_MAP = {
 };
 
 function startSubjQuiz(id, ret){
-  const subjName = SUBJ_MAP[id];
-  // First try real PYQ data
-  let pool = subjName ? PYQ.filter(q => q.sub === subjName) : [];
-  // Fall back to QB practice questions
-  if(pool.length === 0) pool = QB[id] || [];
-  if(pool.length === 0){ alert('No questions available yet for this subject.'); return; }
-  const title = `📐 ${subjName || id} Practice`;
+  // Practice Sets use ONLY QB (our own curated questions) — never PYQ
+  const pool = QB[id] || [];
+  if(pool.length === 0){ alert('Questions for this subject coming soon! 🚧'); return; }
+  const subj = (typeof GATE_SUBJS !== 'undefined') ? GATE_SUBJS.find(s=>s.id===id) : null;
+  const title = `📚 ${subj ? subj.name : id.toUpperCase()} — Practice`;
   launchQuiz(shuffle([...pool]).slice(0, Math.min(20, pool.length)), title, ret||'gate');
 }
 
 function quickGateQuiz(){
-  const csQs = PYQ.filter(q => q.st === 'cs');
-  const pool = csQs.length > 0 ? csQs : Object.values(QB).flat();
-  launchQuiz(shuffle([...pool]).slice(0,15),'⚡ Random GATE Quiz','gate');
+  // Random quiz uses QB questions (practice pool), not PYQ
+  const csKeys = ['ds','algo','os','dbms','cn','toc','co','dm','compiler','se'];
+  const pool = csKeys.flatMap(k => QB[k] || []);
+  if(pool.length === 0){ alert('Practice questions loading...'); return; }
+  launchQuiz(shuffle([...pool]).slice(0,15),'⚡ Random Practice Quiz','gate');
 }
 
 function launchQuiz(qs, title, ret, start=0){
-  quizReturn=ret||'gate';
-  QS={qs,cur:start,correct:0,wrong:0,skipped:0,marks:0,answered:false,sel:null,
-      status:Array(qs.length).fill('u'),bookmarks:new Set(),timer:null,secs:0};
-  document.getElementById('quiz-title').textContent=title;
-  goto('quiz');
-  renderQ();buildQGrid();startTimer();
+  if(!qs||qs.length===0){ alert('No questions available.'); return; }
+  // Require login to start a quiz
+  requireLogin(() => _doLaunchQuiz(qs, title, ret, start), 'Start solving PYQs &amp; quizzes');
+}
+
+function _doLaunchQuiz(qs, title, ret, start){
+  quizReturn = ret || 'gate';
+  quizReturnState = (ret === 'gate' && typeof _gateSubState !== 'undefined') ? _gateSubState : null;
+  QS = {qs, cur:start, correct:0, wrong:0, skipped:0, marks:0, answered:false, sel:null,
+      status:Array(qs.length).fill('u'), bookmarks:new Set(), timer:null, secs:0};
+  document.getElementById('quiz-title').textContent = title;
+  if (typeof _launchQuizNav === 'function') {
+    _launchQuizNav(quizReturn, quizReturnState);
+  } else {
+    goto('quiz');
+  }
+  renderQ(); buildQGrid(); startTimer();
 }
 
